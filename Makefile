@@ -1,14 +1,14 @@
 CC=gcc
 CXX=g++
 NVCC=nvcc -arch=sm_21 -w
-CFLAGS=
+CPPFLAGS=-std=c++11
 EXECUTABLES=
 
 CUDADIR=/usr/local/cuda/
 LIBCUMATDIR=tool/libcumatrix/
 CUMATOBJ=$(LIBCUMATDIR)obj/device_matrix.o $(LIBCUMATDIR)obj/cuda_memory_manager.o
 LIBS=$(LIBCUMATDIR)lib/libcumatrix.a
-HEADEROBJ=obj/algorithm.o
+HEADEROBJ=obj/myAlgorithm.o
 
 # +==============================+
 # +======== Phony Rules =========+
@@ -21,6 +21,7 @@ LIBS=$(LIBCUMATDIR)lib/libcumatrix.a
 $(LIBCUMATDIR)lib/libcumatrix.a:
 	@echo "Missing library file, trying to fix it in tool/libcumatrix"
 	@cd tool/libcumatrix/ ; make ; cd ../..
+
 debug:
 	@CPPFLAGS+=-g
 
@@ -29,19 +30,17 @@ vpath %.cpp src/
 
 INCLUDE= -I include/\
 	 -I $(LIBCUMATDIR)include/\
-	 -I $(CUDA_DIR)include/\
-	 -I $(CUDA_DIR)samples/common/inc/
+	 -I $(CUDADIR)include/\
+	 -I $(CUDADIR)samples/common/inc/
 
-LD_LIBRARY=-L$(CUDA_DIR)lib64 -L$(LIBCUMATDIR)lib
+LD_LIBRARY=-L$(CUDADIR)lib64 -L$(LIBCUMATDIR)lib
 LIBRARY=-lcuda -lcublas -lcudart -lcumatrix
-
 
 larry: $(LIBS) $(HEADEROBJ) 
 #	$(CXX) $(CPPFLAGS) $(INCLUDE) -o $(TARGET) $^ $(LIBS) $(LIBRARY) $(LD_LIBRARY)
 
 dir:
 	@mkdir -p obj
-
 
 ctags:
 	@rm -f src/tags tags
