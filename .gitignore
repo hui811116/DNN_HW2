@@ -3,7 +3,7 @@
 *.lo
 *.o
 *.obj
-obj/*.o
+obj/*
 
 # Precompiled Headers
 *.gch
@@ -20,6 +20,7 @@ obj/*.o
 # Compiled Static libraries
 *.lai
 *.la
+*.a
 *.lib
 
 # Executables
@@ -33,4 +34,4 @@ obj/*.o
 # Tags
 tags
 src/tags
-
+bin/*
