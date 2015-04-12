@@ -1,14 +1,12 @@
 CC=gcc
 CXX=g++
 NVCC=nvcc -arch=sm_21 -w
-CPPFLAGS=-std=c++11
-EXECUTABLES=
+CPPFLAGS=-g -std=c++11
 
 CUDADIR=/usr/local/cuda/
 LIBCUMATDIR=tool/libcumatrix/
-CUMATOBJ=$(LIBCUMATDIR)obj/device_matrix.o $(LIBCUMATDIR)obj/cuda_memory_manager.o
-LIBS=$(LIBCUMATDIR)lib/libcumatrix.a
-HEADEROBJ=obj/myAlgorithm.o
+#CUMATOBJ=$(LIBCUMATDIR)obj/device_matrix.o $(LIBCUMATDIR)obj/cuda_memory_manager.o
+OBJ=obj/myAlgorithm.o
 
 # +==============================+
 # +======== Phony Rules =========+
@@ -34,11 +32,17 @@ INCLUDE= -I include/\
 	 -I $(CUDADIR)samples/common/inc/
 
 LD_LIBRARY=-L$(CUDADIR)lib64 -L$(LIBCUMATDIR)lib
-LIBRARY=-lcuda -lcublas -lcudart -lcumatrix
+LIBRARY=-lcuda -lcublas -lcudart
 
-larry: $(LIBS) $(HEADEROBJ) 
-	$(CXX) $(CPPFLAGS) $(INCLUDE) -o $(TARGET) $^ $(LIBS) $(LIBRARY) $(LD_LIBRARY)
+EXECUTABLES=larry
+#=============APP================================
+larry:  $(OBJ) 
+#	$(CXX) $(CPPFLAGS) -o larry.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
 
+#ADD HERE*
+#================================================
+
+#===========UTIL==========
 dir:
 	@mkdir -p obj
 
