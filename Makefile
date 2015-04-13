@@ -1,7 +1,9 @@
 CC=gcc
 CXX=g++
 NVCC=nvcc -arch=sm_21 -w
-CPPFLAGS=-g -std=c++11
+CPPFLAGS=-std=c++11
+NVCFLAGS=-Xcompiler -fPIC -std=c++11
+EXECUTABLES=
 
 CUDADIR=/usr/local/cuda/
 LIBCUMATDIR=tool/libcumatrix/
@@ -25,6 +27,7 @@ debug:
 
 vpath %.h include/
 vpath %.cpp src/
+vpath %.cu src/
 
 INCLUDE= -I include/\
 	 -I $(LIBCUMATDIR)include/\
@@ -36,8 +39,8 @@ LIBRARY=-lcuda -lcublas -lcudart
 
 EXECUTABLES=larry
 #=============APP================================
-larry:  $(OBJ) 
-#	$(CXX) $(CPPFLAGS) -o larry.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
+larry: example/larryTest.cpp $(OBJ) $(LIBS)
+	$(CXX) $(CPPFLAGS) -o bin/larry.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
 
 #ADD HERE*
 #================================================
@@ -71,5 +74,5 @@ obj/datasetJason.o: src/datasetJason.cpp include/dataset.h
 
 obj/%.o: %.cu
 	@echo "compiling OBJ: $@ "
-	@$(NVCC) $(NVCCFLAGS) $(CPPFLAGS) $(INCLUDE) -o $@ -c $<
+	@$(NVCC) $(NVCCFLAGS) $(INCLUDE) -o $@ -c $<
 

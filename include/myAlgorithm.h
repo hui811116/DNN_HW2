@@ -5,4 +5,4 @@
 using namespace std;
 typedef device_matrix<float> mat;
 
-void viterbi(mat& outputSequence, const mat& information, size_t stateNum);
+void viterbi(mat& yOpt, const mat& w, const mat& x, size_t inputDim, size_t stateNum);
