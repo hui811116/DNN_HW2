@@ -47,7 +47,7 @@ larry: example/larryTest.cpp $(OBJ) $(LIBS)
 
 #===========UTIL==========
 dir:
-	@mkdir -p obj
+	@mkdir -p obj; mkdir -p bin
 
 ctags:
 	@rm -f src/tags tags
@@ -58,7 +58,7 @@ ctags:
 
 clean:
 	@echo "All objects and executables removed"
-	@rm -f $(EXECUTABLES) obj/* ./*.app bin/*
+	@rm -f $(EXECUTABLES) obj/* bin/*
 
 
 # +==============================+

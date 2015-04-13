@@ -76,13 +76,9 @@ Dataset::Dataset(const char* trainPath, size_t trainDataNum, const char* testPat
 	while(getline(fin, s) && count<trainDataNum){
 		count++;
 
-//		cout<<count<<endl;
 		unsigned int pos  = s.find(" ");
 		unsigned int initialPos = 0;
 		split=0;
-		//string tmpName;
-	    //mapData tmpData;
-		//tmpData.inputFeature = new float[inputDim];	
 		while(split<inputDim+1){
 			dataCount++;
 			split++;
@@ -90,22 +86,15 @@ Dataset::Dataset(const char* trainPath, size_t trainDataNum, const char* testPat
 			tempStr= s.substr(initialPos, pos-initialPos);
 			if (split==1){
 				*(_trainDataNameMatrix+count-1) = tempStr;
-				//cout<<*(_trainDataNameMatrix+count-1)<<endl;	
-				//tmpName = tempStr;
 			}
 
 			else{
 				_trainDataMatrix[count-1][split-2] = atof(tempStr.c_str());
-				//cout<<_trainDataMatrix[count-1][split-2]<<endl;
-				//tmpData.inputFeature[split-2] = atof(tempStr.c_str());
 			}		
 			initialPos = pos+1;
 			pos=s.find(" ", initialPos);
 		}		
-		//InputMap.insert(pair<string, mapData>(tmpName, tmpData));
 	}		
-	//cout<<count<<endl;
-	//cout<<dataCount<<endl;
 	
 	fin.close();	
 	cout << "inputting testing file:\n";
@@ -117,14 +106,11 @@ Dataset::Dataset(const char* trainPath, size_t trainDataNum, const char* testPat
 		_testDataMatrix[i] = new float [inputDim];
 	}
 	
-	//cout<<"Test starts"<<endl;
 	ifstream finTest(testPath);
 	if(!finTest) cout<<"Can't open this file!!!\n";
 	string sTest, tempStrTest;
 	while(getline(finTest, sTest)&&testCount<testDataNum){
 		testCount++;
-		//cout<<testCount<<endl;
-		//cout<<count<<endl;
 		unsigned int posTest  = sTest.find(" ");
 		unsigned int initialPos = 0;
 		split=0;
@@ -133,25 +119,16 @@ Dataset::Dataset(const char* trainPath, size_t trainDataNum, const char* testPat
 			split++;
 			
 			tempStrTest= sTest.substr(initialPos, posTest-initialPos);
-			//cout<<"After test subsrt"<<endl;
 			if (split==1){
 				*(_testDataNameMatrix+testCount-1) = tempStrTest;
-				//cout<<*(_testDataNameMatrix+testCount-1)<<endl;	
 			}
 			else{
 				_testDataMatrix[testCount-1][split-2] = atof(tempStrTest.c_str());
-				//cout<<_dataMatrix[count-1][split-2]<<endl;
 			}		
 			initialPos = posTest+1;
 			posTest=sTest.find(" ", initialPos);
 		}		
 	}
-	/*
-	cout<<sizeof _testDataMatrix<<endl;	
-	cout<<sizeof _testDataMatrix[0]<<endl;	
-	cout<<testCount<<endl;
-	cout<<testDataCount<<endl;
-	*/
 	finTest.close();
 
 	cout << "inputting training label file:\n";
@@ -165,66 +142,34 @@ Dataset::Dataset(const char* trainPath, size_t trainDataNum, const char* testPat
 	string sLabel, tempStrLabel, preLabel= "" ;
 	while(getline(finLabel, sLabel)){
 		countLabel++;
-
-		//cout<<count<<endl;
 		unsigned int pos  = sLabel.find(",");
 		unsigned int initialPos = 0;
 		split=0;
-		//string tmpName;
 		while(split<2){
 			labelDataCount++;
 			split++;
 			
 			tempStrLabel = sLabel.substr(initialPos, pos-initialPos);
-			//if (split == 1) tmpName = tempStrLabel;
 
 			if (split==2){
 				if(tempStrLabel.compare(preLabel)!=0){
 					if(_labelMap.find(tempStrLabel)==_labelMap.end()){
 						numForLabel++;
-						//preLabel = tempStrLabel;
 						_labelMap.insert(pair<string, int>(tempStrLabel, numForLabel));	
-						//cout<<numForLabel<<endl;
 					}
 					preLabel = tempStrLabel;
 				}
 
 			
 			*(_labelMatrix+countLabel-1)=_labelMap.find(tempStrLabel)->second;
-			//InputMap.find(tmpName)->second.phoneme =_labelMap.find(tempStrLabel)->second; 
-			//cout<<tempStrLabel<<endl;		
-
-					
-			//*(_labelMatrix+countLabel-1) = tempStrLabel;
-			//	cout<<*(_labelMatrix+count-1)<<endl;	
 			}
 			initialPos = pos+1;
 			pos=sLabel.find(",", initialPos);
 		}		
 	}		
-	//cout<<countLabel<<endl;
-	//cout<<labelDataCount<<endl;
 	
 	finLabel.close();	
-	// initialize all pointers
 	dataSegment(0.9);
-	// put things into dataMatrix
-	/*
-	cout << "putting them into pointers:\n";
-	int mapCount = 0;
-	for (NameFtreMap::const_iterator it = InputMap.begin();
-		 it != InputMap.end(); ++it){
-		 _trainDataMatrix[mapCount] = it->second.inputFeature;
-		 _labelMatrix[mapCount] = it->second.phoneme;
-		 mapCount ++;
-	}
-	*/
-	/*
-	for (NameFtreMap::const_iterator it = InputMap.begin();
-		 it != InputMap.end(); ++it){
-		 delete[] it->second.inputFeature;
-	}
-	*/
 };
 Dataset::Dataset(Data data, char mode){
 	
@@ -278,7 +223,6 @@ Dataset::Dataset(Data data, char mode){
 			
 		}	
 		
-		
 		//fin.close();
 	
 		_trainDataNameMatrix = new string[data.trainDataNum];
@@ -286,18 +230,14 @@ Dataset::Dataset(Data data, char mode){
 		
 		for(int i=0;i<data.trainDataNum;i++){
 			_trainDataMatrix[i]=new float[data.inputDim*(2*_frameRange+1)];
-//			cout<<data.inputDim*(2*_frameRange+1)<<endl;
 		}
 		for(int i=0;i<data.trainDataNum;i++){
 			unsigned int pos = (*(tempTrainDataNameMatrix+i)).find_last_of("_");				
-			//cout<<*(tempTrainDataNameMatrix+i)<<endl;
 			_trainDataNameMatrix[i]=tempTrainDataNameMatrix[i];
 			string str = _trainDataNameMatrix[i].substr(0,pos);
 			unsigned int num = atoi(_trainDataNameMatrix[i].substr(pos+1).c_str());
-			//cout<<"num"<<num<<endl;
 			for(int j =(_frameRange*(-1));j<=_frameRange;j++){
 				int k = j;
-				//cout<<"j:"<<j<<endl;
 				if(num+j<1||(i+j)>=_numOfTrainData){
 					k=0;	
 				}
@@ -307,15 +247,12 @@ Dataset::Dataset(Data data, char mode){
 				
 					if(num2!=(num+j))	k=0;
 				}	
-				
 	
 				for(int l=0;l<_featureDimension;l++){
 				_trainDataMatrix[i][_featureDimension*(j+_frameRange)+l]=tempTrainDataMatrix[i+k][l];	
 				}
 			}
-			
 		}
-		
 		
 		fin.close();
 
@@ -331,7 +268,6 @@ Dataset::Dataset(Data data, char mode){
 		ifstream finTest(data.testPath);
 		if(!finTest) cout<<"Can't open the test data!\n";
 		else cout<<"Inputting test data!\n";
-		//string s, tempStr;
 		while(getline(finTest,s)&&count<data.testDataNum){
 			count++;
 			size_t pos = s.find(" ");
@@ -356,7 +292,6 @@ Dataset::Dataset(Data data, char mode){
 			
 		}	
 		
-		
 		//fin.close();
 	
 		_testDataNameMatrix = new string[data.testDataNum];
@@ -367,14 +302,11 @@ Dataset::Dataset(Data data, char mode){
 		}
 		for(int i=0;i<data.testDataNum;i++){
 			unsigned int pos = (*(tempTestDataNameMatrix+i)).find_last_of("_");				
-			//cout<<*(tempTrainDataNameMatrix+i)<<endl;
 			_testDataNameMatrix[i]=tempTestDataNameMatrix[i];
 			string str = _testDataNameMatrix[i].substr(0,pos);
 			unsigned int num = atoi(_testDataNameMatrix[i].substr(pos+1).c_str());
-			//cout<<"num"<<num<<endl;
 			for(int j =(_frameRange*(-1));j<=_frameRange;j++){
 				int k = j;
-				//cout<<"j:"<<j<<endl;
 				if(num+j<1||(i+j)>=_numOfTestData){
 					k=0;	
 				}
@@ -414,7 +346,6 @@ Dataset::Dataset(Data data, char mode){
 				split++;
 			
 				tempStrLabel = sLabel.substr(initialPos, pos-initialPos);
-	//			cout<<"tempStrLabel: "<<tempStrLabel<<endl;
 				if (split == 1) tmpName = tempStrLabel;
 
 				if (split==2){
@@ -433,11 +364,8 @@ Dataset::Dataset(Data data, char mode){
 			pos=sLabel.find(",", initialPos);
 		}		
 	}		
-	//cout<<countLabel<<endl;
-	//cout<<labelDataCount<<endl;
 	
 	finLabel.close();	
-			
 		
 		//destructor
 		if(_numOfTrainData!=0) delete [] tempTrainDataNameMatrix;
@@ -486,20 +414,14 @@ Dataset::~Dataset(){
 		delete []_labelMatrix;
 	}
 	if (_trainX != NULL){
-		//for (int i = 0; i < _trainSize; i++ )
-		//	delete[] _trainX[i];
 		delete[] _trainX;
 	}
 	if (_validX != NULL){
-		//for (int i = 0; i < _validSize; i++ )
-		//	delete[] _validX[i];
 		delete[] _validX;
 	}
 	delete[] _trainY;
 	delete[] _validY;
 
-	//TODO deletion for pointers
-	// NOTE:: deletion for _trainX _validX _trainY _validY need careful implementation!!
 };
 
 void Dataset::saveCSV(vector<size_t> testResult){
@@ -517,28 +439,21 @@ void Dataset::saveCSV(vector<size_t> testResult){
 		for(map<string,int>::iterator it = _labelMap.begin();it!=_labelMap.end();it++){
 			if(it->second==testResult.at(i)){
 				phoneme = it->first;
-	//			cout<<phoneme<<endl;
 				break;
 			}
 		}
-		//	map<string, string>iterator it2 = _To39PhonemeMap.find(phoneme);
 			phoneme = _To39PhonemeMap.find(phoneme)->second;
 
 		fout<<phoneme<<endl;
-	
 	}	
 	fout.close();
 }
 
-
-
 //Get function
 mat Dataset::getTestSet(){
-	//cout << "size of test set: " << getInputDim() << " " << _numOfTestData << endl;
 	return inputFtreToMat(_testDataMatrix, getInputDim(), _numOfTestData);
 }
 mat Dataset::getTestSet(float** testData,size_t frameRange, size_t testNum){
-	cout<<"mat row: "<<getInputDim()*(2*frameRange+1)<<endl;	
 	return inputFtreToMat(testData, getInputDim()*(2*frameRange+1), testNum);
 
 }
@@ -575,11 +490,9 @@ void Dataset::loadTo39PhonemeMap(const char* mapFilePath){
 			else
 			{
 				sVal = s.substr(initialPos, pos-initialPos);
-		//		cout<<sKey<<" "<<sVal<<endl;
 				_To39PhonemeMap.insert(pair<string,string>(sKey,sVal));
 			}
 			initialPos = pos+1;
-//			pos=s.find("\t", initialPos);
 			judge++;
 		}
 	}
@@ -618,24 +531,6 @@ void Dataset::getBatch(int batchSize, mat& batch, mat& batchLabel){
 		_batchCtr ++;
 	}
 
-	
-	
-	// random initialize indices for this batch	
-	/*
-	int* randIndex = new int [batchSize];
-	for (int i = 0; i < batchSize; i++){
-		randIndex[i] = rand() % _trainSize; 
-	}
-	float** batchFtre = new float*[batchSize];
-	int*    batchOutput = new int[batchSize];
-	for (int i = 0; i < batchSize; i++){
-		batchFtre[i] = _trainX[ randIndex[i] ];
-		batchOutput[i] = _trainY[ randIndex[i] ];
-	}
-	delete[] randIndex;
-	randIndex = NULL;
-	*/
-	// convert them into mat format
 	batch = inputFtreToMat( batchFtre, getInputDim(), batchSize);
 	batchLabel = outputNumtoBin( batchOutput, batchSize );
 	// free tmp pointers
@@ -643,15 +538,6 @@ void Dataset::getBatch(int batchSize, mat& batch, mat& batchLabel){
 	delete[] batchFtre;
 	batchOutput = NULL;
 	batchFtre = NULL;
-	// for debugging, print both matrices
-	/*
-	cout << "This is the feature matrix\n";
-	batch.print();
-	cout << "from trainX pointer:\n";
-	prtPointer(batchFtre, _numOfLabel, batchSize);
-	cout << "This is the label matrix\n";
-	batchLabel.print();
-	*/
 }
 
 void Dataset::getTrainSet(int trainSize, mat& trainData, vector<size_t>& trainLabel){
@@ -683,8 +569,6 @@ void Dataset::getTrainSet(int trainSize, mat& trainData, vector<size_t>& trainLa
 	
 	_trainSetFlag = true;
 	trainMat = trainData;
-	//cout << "get Train Set:\n";
-	//trainData.print();
 	delete[] randIndex;
 	delete[] trainFtre;
 	randIndex = NULL;
@@ -750,12 +634,6 @@ void Dataset::dataSegment( float trainProp ){
 	random_shuffle(randIndex.begin(), randIndex.end());
 	// print shuffled data
 	cout << "start shuffling:\n";
-	/*
-	for (int i = 0; i < getNumOfTrainData(); i++){
-		cout << randIndex[i] <<" ";
-	}
-	*/
-	// 
 	cout << "put feature into training set\n";
 	cout << "trainingsize = " << _trainSize <<endl;
 	_trainX = new float*[_trainSize];
@@ -772,17 +650,6 @@ void Dataset::dataSegment( float trainProp ){
 		_validX[i] = _trainDataMatrix [ randIndex[_trainSize + i] ];
 		_validY[i] = _labelMatrix[ randIndex[_trainSize + i] ];
 	}
-	// debugging, print out train x y valid x y
-	/*
-	prtPointer(_trainX, _numOfLabel, _trainSize);
-	prtPointer(_validX, _numOfLabel, _validSize);
-	cout << "print train phoneme:\n";
-	for (int i = 0; i < _trainSize; i++)
-		cout << _trainY[i] << " ";
-	cout << "print valid phoneme:\n";
-	for (int i = 0; i < _validSize; i++)
-		cout << _validY[i] << " ";
-	*/
 }
 mat Dataset::outputNumtoBin(int* outputVector, int vectorSize)
 {
@@ -801,12 +668,9 @@ mat Dataset::outputNumtoBin(int* outputVector, int vectorSize)
 mat Dataset::inputFtreToMat(float** input, int r, int c){
 	// r shall be the number of Labels
 	// c shall be the number of data
-	//cout << "Ftre to Mat size is : " << r << " " << c<<endl;
-	//cout << "size is : " << r << " " << c<<endl;
 	float* inputReshaped = new float[r * c];
 	for (int i = 0; i < c; i++){
 		for (int j = 0; j < r; j++){
-			//*(inputReshaped + i*r + j) = *(*(input + i) +j);
 			*(inputReshaped + i*r + j) = input[i][j];
 		}
 	}
@@ -816,7 +680,6 @@ mat Dataset::inputFtreToMat(float** input, int r, int c){
 	return outputMat;
 }
 void Dataset::prtPointer(float** input, int r, int c){
-	//cout << "this prints the pointer of size: " << r << " " << c << endl;
 	for (int i = 0; i < c; i++){
 		cout << i << endl;
 		for(int j = 0; j < r; j++){
