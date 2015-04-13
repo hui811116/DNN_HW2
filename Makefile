@@ -6,7 +6,7 @@ CPPFLAGS=-g -std=c++11
 CUDADIR=/usr/local/cuda/
 LIBCUMATDIR=tool/libcumatrix/
 #CUMATOBJ=$(LIBCUMATDIR)obj/device_matrix.o $(LIBCUMATDIR)obj/cuda_memory_manager.o
-OBJ=obj/myAlgorithm.o
+OBJ=obj/myAlgorithm.o obj/dataset.o
 
 # +==============================+
 # +======== Phony Rules =========+
