@@ -41,6 +41,11 @@ EXECUTABLES=larry
 #=============APP================================
 larry: example/larryTest.cpp $(OBJ) $(LIBS)
 	$(CXX) $(CPPFLAGS) -o bin/larry.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
+ahpan: example/ahpanDatasetTest.cpp $(OBJ) $(LIBS)
+	$(CXX) $(CPPFLAGS) -o bin/ahpanDatasetTest.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
+
+
+
 
 #ADD HERE*
 #================================================

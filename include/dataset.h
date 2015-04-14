@@ -58,6 +58,15 @@ class Dataset{
 	void   loadTo39PhonemeMap(const char*);
 	void   saveCSV(vector<size_t> testResult);
 
+	// load function
+	void   loadData(string dataKind, string dataType, const char* dataFile, const char* delimiter);
+
+	// make data function
+	void buildFeatureVector();	
+
+
+	
+
 private:
 	// dataset parameters
 	size_t _featureDimension; //input Dim
@@ -69,6 +78,15 @@ private:
 	int    _trainSize;
 	int    _validSize;
 	int _frameRange; //Used for frame
+
+	
+	//new dataset parameters
+	double* _trainData;
+	string* _trainName;
+	double* _testData;
+	string* _testName;
+	int*	_labelData;
+	map<string, double*> _featureVectorMap;
 	
 	// datasetJason private functions
 	mat    outputNumtoBin(int* outputVector, int vectorSize);

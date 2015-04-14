@@ -18,8 +18,20 @@ typedef map<string, mapData> NameFtreMap;
 using namespace std;
 typedef device_matrix<float> mat;
 
+void loadFile(const char*, string* &, double* &,const char*, size_t, size_t);
+void loadFileWithLabel(const char*, string* &, double* &, int* &,const char*, size_t,size_t);
+
 Dataset::Dataset(){
-	_featureDimension=39;
+	
+	_trainData=NULL;
+	_trainName=NULL;
+	_testData=NULL;
+	_testName=NULL;
+	_labelData=NULL;
+
+
+
+	_featureDimension=0;
 	_stateDimension=0;
 	_numOfTrainData=0;
 	_numOfPhoneme=0;
@@ -38,7 +50,7 @@ Dataset::Dataset(){
 	_trainSetFlag = false;
 	_validSetFlag = true;
 	_batchCtr = 0;
-}
+};
 Dataset::Dataset(const char* trainPath, size_t trainDataNum, const char* testPath, size_t testDataNum, const char* labelPath, size_t labelDataNum, size_t labelNum, size_t inputDim, size_t outputDim, size_t phonemeNum){
 	
 	_trainDataNameMatrix = NULL;
@@ -390,6 +402,13 @@ Dataset::Dataset(Data data, char mode){
 };
 Dataset::Dataset(const Dataset& data){};
 Dataset::~Dataset(){
+	
+	if(_trainData!=NULL) delete []_trainData;
+	if(_trainName!=NULL) delete []_trainName;
+	if(_testData!=NULL) delete []_testData;
+	if(_testName!=NULL) delete []_testName;
+	if(_labelData!=NULL) delete []_labelData;
+	
 	if(_numOfTrainData!=0)
 		delete [] _trainDataNameMatrix;
 	if(_trainDataMatrix != NULL){
@@ -449,6 +468,7 @@ void Dataset::saveCSV(vector<size_t> testResult){
 	fout.close();
 }
 
+
 //Get function
 mat Dataset::getTestSet(){
 	return inputFtreToMat(_testDataMatrix, getInputDim(), _numOfTestData);
@@ -474,7 +494,7 @@ float** Dataset::getTestDataMatrix(){return _testDataMatrix;}
 map<string, int> Dataset::getLabelMap(){return _labelMap;}
 map<string, string> Dataset::getTo39PhonemeMap(){return _To39PhonemeMap;}
 
-//Load function
+// load function
 void Dataset::loadTo39PhonemeMap(const char* mapFilePath){
 	ifstream fin(mapFilePath);
 	if(!fin) cout<<"Can't open the file!\n";
@@ -498,6 +518,136 @@ void Dataset::loadTo39PhonemeMap(const char* mapFilePath){
 	}
 	fin.close();
 }
+
+void Dataset::loadData(string dataKind, string dataType,const char* dataFile,const char* delimiter){
+	
+	cout << "inputting "<<dataType<<" file:\n";	
+	
+	_stateDimension = 48;
+	//data dimension
+
+	if(dataKind.compare("fbank")==0) _featureDimension = 69;
+	else if(dataKind.compare("mfcc")==0) _featureDimension = 39;
+	else ;
+
+	if(dataType.compare("train")==0){
+		_numOfTrainData = 1124823;	
+		 loadFile(dataFile,_trainName, _trainData," ", _featureDimension,_numOfTrainData);
+	}
+	else if(dataType.compare("test")==0){
+		_numOfTestData = 180406;
+		 loadFile(dataFile,_testName, _trainData, " ", _featureDimension, _numOfTestData);
+	}
+	else if(dataType.compare("trainWithLabel")==0){
+		_numOfTrainData = 1124823;
+		 loadFileWithLabel(dataFile, _trainName, _trainData, _labelData, " ", _featureDimension, _numOfTrainData);
+	}
+	else ;
+}
+
+//help funcion
+void loadFile(const char* dataFile, string* &dataName, double* &dataValue, const char* delimiter, size_t dataDim, size_t dataNum){
+
+	ifstream fin(dataFile);
+	if(!fin) cout<<"Can't open this file!!!\n";
+	
+	dataName = new string[dataNum];
+	dataValue = new double[dataDim*dataNum];
+	
+	size_t count = 0, split = 0;
+	string s, tempStr;
+	bool newline;
+	while(getline(fin, s)){
+		newline=true;
+		split=0;
+		size_t pos  = s.find(delimiter);
+		size_t initialPos = 0;
+		while(pos!=string::npos){
+			
+			tempStr= s.substr(initialPos, pos-initialPos);
+			if (newline){
+				dataName[count] = tempStr;
+				newline = false;
+			}
+
+			else{
+				dataValue[count*dataDim+split-2] = atof(tempStr.c_str());
+			}		
+			initialPos = pos+1;
+			pos=s.find(delimiter, initialPos);
+			split++;
+		}
+		
+		count++;		
+	}		
+	
+	fin.close();	
+
+
+}
+void loadFileWithLabel(const char* dataFile, string* &dataName, double* &dataValue,int* &labelValue,const char* delimiter, size_t dataDim, size_t dataNum){
+
+	ifstream fin(dataFile);
+	if(!fin) cout<<"Can't open this file!!!\n";
+
+	dataName = new string[dataNum];
+	dataValue = new double[dataDim*dataNum];
+	labelValue = new int[dataDim*dataNum];
+	size_t count = 0, split = 0;
+	string s, tempStr;
+	bool newline, newLabel;
+	while(getline(fin, s)){
+		newline=true;
+		newLabel=true;
+		split=0;
+		size_t pos  = s.find(delimiter);
+		size_t initialPos = 0;
+		while(pos!=string::npos){
+			
+			tempStr= s.substr(initialPos, pos-initialPos);
+			if (newline){
+				dataName[count] = tempStr;
+				newline = false;
+			}
+			else if(newLabel){
+				labelValue[count] = atoi(tempStr.c_str());
+				newLabel = false;
+			}
+			else{
+				dataValue[count*dataDim+split-2] = atof(tempStr.c_str());
+			}		
+			initialPos = pos+1;
+			pos=s.find(delimiter, initialPos);
+			split++;
+		}
+		count++;		
+	}		
+	
+	fin.close();	
+	cout<<"Finsh loading."<<endl;
+
+}
+
+//make data function
+void Dataset::buildFeatureVector(){
+	string tmpStr, prevStr="";
+	int tmpLabel, prevLabel;	
+
+	cout<<"Make Feature Vector\n";
+	for(size_t i=0;i<_numOfTrainData;i++){
+		
+		tmpStr = _trainName[i].substr(0, _trainName[i].find_last_of(" "));
+		if(tmpStr.compare(prevStr)!=0){
+			double* value = new double[_featureDimension*_stateDimension+_stateDimension*_featureDimension];	
+			_featureVectorMap.insert(pair<string,double*>(tmpStr,value));
+			prevStr = tmpStr;
+		}	
+		
+		 	
+	}
+	cout<<"Feature Vector is finished.\n";
+}
+
 
 //Print function
 void Dataset::printTo39PhonemeMap(map<string, string> Map){
