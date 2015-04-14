@@ -63,7 +63,7 @@ class Dataset{
 
 	// make data function
 	void buildFeatureVector();	
-
+	void outputFeatureVector();
 
 	
 

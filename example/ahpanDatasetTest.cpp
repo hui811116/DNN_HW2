@@ -34,7 +34,7 @@ int main(int argc, char**argv){
 	
 	Dataset dataset=Dataset();
 	dataset.loadData("fbank", "trainWithLabel", "Data/MLDS_HW1_RELEASE_v1/fbank/trainWithLabel.ark"," ");
-	
-
+	dataset.buildFeatureVector();	
+	dataset.outputFeatureVector();
 	return 0;
 }
