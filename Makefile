@@ -7,8 +7,9 @@ EXECUTABLES=
 
 CUDADIR=/usr/local/cuda/
 LIBCUMATDIR=tool/libcumatrix/
+SVMDIR=tool/svm_struct/
 #CUMATOBJ=$(LIBCUMATDIR)obj/device_matrix.o $(LIBCUMATDIR)obj/cuda_memory_manager.o
-OBJ=obj/myAlgorithm.o obj/dataset.o
+OBJ=obj/myAlgorithm.o obj/dataset.o $(SVMDIR)svm_struct_api.o $(SVMDIR)svm_struct_learn_custom.o
 
 # +==============================+
 # +======== Phony Rules =========+
@@ -32,8 +33,8 @@ vpath %.cu src/
 INCLUDE= -I include/\
 	 -I $(LIBCUMATDIR)include/\
 	 -I $(CUDADIR)include/\
-	 -I $(CUDADIR)samples/common/inc/
-
+	 -I $(CUDADIR)samples/common/inc/\
+	 
 LD_LIBRARY=-L$(CUDADIR)lib64 -L$(LIBCUMATDIR)lib
 LIBRARY=-lcuda -lcublas -lcudart
 

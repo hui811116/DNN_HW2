@@ -7,11 +7,12 @@
 CC = gcc
 LD = gcc
 
-CFLAGS =   $(SFLAGS) -O3 -fomit-frame-pointer -ffast-math -Wall 
-LDFLAGS =  $(SFLAGS) -O3 -lm -Wall
-#CFLAGS =  $(SFLAGS) -pg -Wall
-#LDFLAGS = $(SFLAGS) -pg -lm -Wall 
-
+#CFLAGS =   $(SFLAGS) -O3 -lm -fomit-frame-pointer -ffast-math -Wall 
+#LDFLAGS =  $(SFLAGS) -O3 -lm -Wall
+#SFLAGS = -std=c++0x
+CFLAGS =  $(SFLAGS) -pg -Wall
+LDFLAGS = $(SFLAGS) -pg -lm -Wall 
+LIBS = -lm
 all: svm_empty_learn svm_empty_classify
 
 .PHONY: clean

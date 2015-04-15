@@ -4,7 +4,9 @@
 *.o
 *.obj
 obj/*
-
+tool/svm_struct/*.o
+tool/svm_struct/svm_light/*.o
+tool/svm_struct/svm_struct/*.o
 # Precompiled Headers
 *.gch
 *.pch
