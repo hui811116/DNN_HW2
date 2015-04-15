@@ -67,7 +67,11 @@ for(size_t t=0;t<lmap.size();++t){
 }
 cout<<"done!"<<endl;
 cout<<"generating svm features...";
-ofstream svm("svm.csv");
+ofstream svm;
+if(argc==4)
+svm.open("svm.csv");
+else
+svm.open(argv[4]);
 svmFeature(svm,f_ptr,l_ptr,observation,state,lmap.size());
 svm.close();
 cout<<"done!"<<endl;
