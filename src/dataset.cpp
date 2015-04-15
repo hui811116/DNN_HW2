@@ -276,6 +276,10 @@ Dataset::~Dataset(){
 	if(_testData!=NULL) delete []_testData;
 	if(_testName!=NULL) delete []_testName;
 	if(_labelData!=NULL) delete []_labelData;
+	map<string,double*>::iterator it ;
+	for(it=_featureVectorMap.begin();it!=_featureVectorMap.end();it++){
+		delete [] it->second;
+	}
 	
 	if(_numOfTrainData!=0)
 		delete [] _trainDataNameMatrix;
@@ -499,23 +503,48 @@ void loadFileWithLabel(const char* dataFile, string* &dataName, double* &dataVal
 //make data function
 void Dataset::buildFeatureVector(){
 	string tmpStr, prevStr="";
-	int tmpLabel, prevLabel;	
+	int tmpLabel, prevLabel=_stateDimension+1;	
 
 	cout<<"Make Feature Vector\n";
 	for(size_t i=0;i<_numOfTrainData;i++){
-		
+		cout<<i<<endl;	
+		tmpLabel = _labelData[i];
 		tmpStr = _trainName[i].substr(0, _trainName[i].find_last_of(" "));
 		if(tmpStr.compare(prevStr)!=0){
-			double* value = new double[_featureDimension*_stateDimension+_stateDimension*_featureDimension];	
+			double* value = new double[_featureDimension*_stateDimension+_stateDimension*_stateDimension];	
+			
+			for(size_t k=0;k<_featureDimension*_stateDimension+_stateDimension*_stateDimension;k++) value[k]=0;
+			
 			_featureVectorMap.insert(pair<string,double*>(tmpStr,value));
-			prevStr = tmpStr;
 		}	
-		
-		 	
+		for(size_t j=0;j<_featureDimension;j++){
+			(_featureVectorMap.find(tmpStr)->second)[j+_featureDimension*tmpLabel] +=_trainData[i*_featureDimension+j];
+		}
+		 
+		if(tmpStr.compare(prevStr)==0)(_featureVectorMap.find(tmpStr)->second)[_featureDimension*_stateDimension+prevLabel*_stateDimension+tmpLabel] +=1;
+	
+		prevStr = tmpStr;
+		prevLabel = _labelData[i];
 	}
 	cout<<"Feature Vector is finished.\n";
 }
 
+void Dataset::outputFeatureVector(){
+	cout<<"Output feature vector:"<<endl;
+	ofstream fout("FeatureVecotr.csv");
+	fout<<"id,feature\n";
+
+	map<string, double*>::iterator it;	
+	for(it=_featureVectorMap.begin();it!=_featureVectorMap.end();it++){
+		string tmpStr = it->first;
+		for(size_t i=0;i<_featureDimension*_stateDimension+_stateDimension*_stateDimension;i++){
+			fout<<tmpStr<<"_"<<i<<",";
+			fout<<it->second[i];
+			fout<<endl;
+		}
+	}	
+	fout.close();
+}
 
 //Print function
 void Dataset::printTo39PhonemeMap(map<string, string> Map){
