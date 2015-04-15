@@ -33,7 +33,7 @@ int main(int argc, char**argv){
 	int frameRange=4;	
 	
 	Dataset dataset=Dataset();
-	dataset.loadData("fbank", "trainWithLabel", "Data/MLDS_HW1_RELEASE_v1/fbank/trainWithLabel.ark"," ");
+	dataset.loadData("fbank", "trainWithLabel", "/home/ahpan/DeepLearningHW2/DNN_HW2/Data/MLDS_HW1_RELEASE_v1/fbank/trainWithLabel.ark"," ");
 	dataset.buildFeatureVector();	
 	dataset.outputFeatureVector();
 	return 0;

@@ -29,8 +29,6 @@ Dataset::Dataset(){
 	_testName=NULL;
 	_labelData=NULL;
 
-
-
 	_featureDimension=0;
 	_stateDimension=0;
 	_numOfTrainData=0;
@@ -409,7 +407,7 @@ Dataset::~Dataset(){
 	if(_testName!=NULL) delete []_testName;
 	if(_labelData!=NULL) delete []_labelData;
 	map<string,double*>::iterator it ;
-	for(it=_featureVectorMap.begin();it!=_featureVectorMap.end();it++){
+	for(it=_featureVectorMap->begin();it!=_featureVectorMap->end();it++){
 		delete [] it->second;
 	}
 	
@@ -444,7 +442,6 @@ Dataset::~Dataset(){
 	}
 	delete[] _trainY;
 	delete[] _validY;
-
 };
 
 void Dataset::saveCSV(vector<size_t> testResult){

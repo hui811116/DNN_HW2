@@ -1,7 +1,7 @@
 CC=gcc
 CXX=g++
 NVCC=nvcc -arch=sm_21 -w
-CPPFLAGS=-std=c++11
+CPPFLAGS=-std=c++11 -g
 NVCFLAGS=-Xcompiler -fPIC -std=c++11
 EXECUTABLES=
 
@@ -22,8 +22,7 @@ $(LIBCUMATDIR)lib/libcumatrix.a:
 	@echo "Missing library file, trying to fix it in tool/libcumatrix"
 	@cd tool/libcumatrix/ ; make ; cd ../..
 
-debug:
-	@CPPFLAGS+=-g
+debug:CPPFLAGS+=-g
 
 vpath %.h include/
 vpath %.cpp src/
