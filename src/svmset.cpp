@@ -1,6 +1,7 @@
 #include "svmset.h"
 #include <iostream>
 #include <cstdlib>
+#include <cassert>
 using namespace std;
 
 
@@ -94,9 +95,11 @@ size_t Svmset::svmdim()const{
 	return _svmdim;
 }
 string Svmset::getFrameName(size_t idx)const{
+	assert(idx<size());
 	return (_vsptr->at(idx)).first;
 }
 double* Svmset::getFeature(size_t idx)const{
+	assert(idx<size());
 	return (_vsptr->at(idx)).second;
 }
 bool Svmset::parse(ifstream& in){
