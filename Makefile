@@ -3,18 +3,20 @@ CXX=g++
 NVCC=nvcc -arch=sm_21 -w
 CPPFLAGS=-std=c++11 -O2
 NVCFLAGS=-Xcompiler -fPIC -std=c++11
-EXECUTABLES=
-
 CUDADIR=/usr/local/cuda/
 LIBCUMATDIR=tool/libcumatrix/
-#CUMATOBJ=$(LIBCUMATDIR)obj/device_matrix.o $(LIBCUMATDIR)obj/cuda_memory_manager.o
-OBJ=obj/myAlgorithm.o obj/dataset.o
+OBJ=obj/svmset.o obj/myAlgorithm.o 
+# ================================
+# = 		ADD EXE HERE         =
+# ================================
+EXECUTABLES=svmGen
 
 # +==============================+
 # +======== Phony Rules =========+
 # +==============================+
 
 .PHONY: debug all clean 
+all:$(EXECUTABLES)
 
 LIBS=$(LIBCUMATDIR)lib/libcumatrix.a
 
@@ -37,19 +39,16 @@ INCLUDE= -I include/\
 LD_LIBRARY=-L$(CUDADIR)lib64 -L$(LIBCUMATDIR)lib
 LIBRARY=-lcuda -lcublas -lcudart
 
-EXECUTABLES=larry
 #=============APP================================
 larry: example/larryTest.cpp $(OBJ) $(LIBS)
 	$(CXX) $(CPPFLAGS) -o bin/larry.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
-ahpan: example/ahpanDatasetTest.cpp $(OBJ) $(LIBS)
-	$(CXX) $(CPPFLAGS) -o bin/ahpanDatasetTest.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
+#ahpan: example/ahpanDatasetTest.cpp $(OBJ) $(LIBS)
+#	$(CXX) $(CPPFLAGS) -o bin/ahpanDatasetTest.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
+#hui: example/svmsetTest.cpp obj/svmset.o 
+#	$(CXX) $(CPPFLAGS) -o bin/hui.app $^ -I include/
 svmGen: example/svmFeatureGen.cpp
 	$(CXX) $(CPPFLAGS) -o bin/svmFeatureGen.app $^
 
-
-
-#ADD HERE*
-#================================================
 
 #===========UTIL==========
 dir:
