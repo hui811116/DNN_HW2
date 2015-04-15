@@ -58,14 +58,20 @@ write(out,f_ptr,l_ptr);
 out.close();
 cout<<"done!"<<endl;
 */
+cout<<"allocating memeory...";
 double** observation=new double*[lmap.size()];
 int** state=new int*[lmap.size()];
 for(size_t t=0;t<lmap.size();++t){
 	observation[t]=new double[(f_ptr->at(0)).second.size()];
 	state[t]=new int[lmap.size()];
 }
+cout<<"done!"<<endl;
 cout<<"generating svm features...";
-ofstream svm("svm.csv");
+ofstream svm;
+if(argc==4)
+svm.open("svm.csv");
+else
+svm.open(argv[4]);
 svmFeature(svm,f_ptr,l_ptr,observation,state,lmap.size());
 svm.close();
 cout<<"done!"<<endl;
@@ -204,6 +210,7 @@ void svmFeature(ofstream& out,vector<frame>* f_ptr,vector<size_t>* l_ptr,double*
 				st[c_label][label]++;
 		c_label=label;
 	}
+	oneFrameOut(out,ob,st,l,v,c_name);
 }
 
 void oneFrameOut(ofstream& out,double** ob,int** st,size_t l,size_t v,string name){
