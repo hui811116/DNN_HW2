@@ -4,9 +4,8 @@
 *.o
 *.obj
 obj/*
-tool/svm_struct/*.o
-tool/svm_struct/svm_light/*.o
-tool/svm_struct/svm_struct/*.o
+./**/*.o
+
 # Precompiled Headers
 *.gch
 *.pch
@@ -29,6 +28,8 @@ tool/svm_struct/svm_struct/*.o
 *.exe
 *.out
 *.app
+./**/*.app
+bin/*
 
 # Log file
 *.log
@@ -36,4 +37,3 @@ tool/svm_struct/svm_struct/*.o
 # Tags
 tags
 src/tags
-bin/*
