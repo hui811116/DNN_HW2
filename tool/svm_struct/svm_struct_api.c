@@ -308,12 +308,62 @@ void        write_struct_model(char *file, STRUCTMODEL *sm,
 			       STRUCT_LEARN_PARM *sparm)
 {
   /* Writes structural model sm to file file. */
+	FILE* fp;
+	fp = fopen(file, "w");
+	// write struct_model
+	int i = 0;
+	fprintf(fp, "w: ");
+	for (i = 0; i < sm->sizePsi; i++){
+		fprintf(fp, "%f ", sm->w[i]);
+	}
+	fprintf(fp, "\n");
+
+	fprintf(fp, "size of w: %ld\n", sm->sizePsi);
+
+	fprintf(fp, "walpha: %f\n", sm->walpha);
+	// structure model unknown
+	// write struct_model_parameter
+	fprintf(fp, "epsilon: %f\n", sparm->epsilon);	
+	fprintf(fp, "newconstretrain: %f\n", sparm->newconstretrain);
+	fprintf(fp, "ccache_size: %d\n", sparm->ccache_size);
+	fprintf(fp, "batch_size: %f\n", sparm->batch_size);
+	fprintf(fp, "C: %f\n", sparm->C);
+	fprintf(fp, "slack_norm: %d\n", sparm->slack_norm);
+	fprintf(fp, "loss_type: %d\n", sparm->loss_type);
+	fprintf(fp, "loss_function: %d\n", sparm->loss_function);
+	// write custom arguments
+	
+	fprintf(fp, "custom_argc: %d\n", sparm->custom_argc);
+	
+	
+	fclose(fp);
 }
+
 
 STRUCTMODEL read_struct_model(char *file, STRUCT_LEARN_PARM *sparm)
 {
   /* Reads structural model sm from file file. This function is used
      only in the prediction module, not in the learning module. */
+	STRUCTMODEL mdl;
+	FILE* fp;
+	
+	fp = fopen(file, "r");
+	fscanf(fp, "size of w: %ld\n", mdl.sizePsi);
+	fscanf(fp, "walpha: %f\n", mdl.walpha);
+	// structure model unknown
+	// write struct_model_parameter
+	fscanf(fp, "epsilon: %f\n", sparm->epsilon);	
+	fscanf(fp, "newconstretrain: %f\n", sparm->newconstretrain);
+	fscanf(fp, "ccache_size: %d\n", sparm->ccache_size);
+	fscanf(fp, "batch_size: %f\n", sparm->batch_size);
+	fscanf(fp, "C: %f\n", sparm->C);
+	fscanf(fp, "slack_norm: %d\n", sparm->slack_norm);
+	fscanf(fp, "loss_type: %d\n", sparm->loss_type);
+	fscanf(fp, "loss_function: %d\n", sparm->loss_function);
+	// write custom arguments
+	
+	fscanf(fp, "custom_argc: %d\n", sparm->custom_argc);
+	fclose(fp);
 }
 
 void        write_label(FILE *fp, LABEL y)
