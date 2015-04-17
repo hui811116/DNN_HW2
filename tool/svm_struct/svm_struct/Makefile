@@ -2,7 +2,7 @@
 
 #Use the following to compile under unix or cygwin
 CC = gcc
-LD = g++
+LD = gcc
 
 #Call 'make' using the following line to make CYGWIN produce stand-alone Windows executables
 #		make 'SFLAGS=-mno-cygwin'

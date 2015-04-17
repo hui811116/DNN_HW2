@@ -17,6 +17,7 @@
 /*                                                                     */
 /***********************************************************************/
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "svm_struct/svm_struct_common.h"
@@ -202,8 +203,11 @@ int         empty_label(LABEL y)
   /* Returns true, if y is an empty label. An empty label might be
      returned by find_most_violated_constraint_???(x, y, sm) if there
      is no incorrect label that can be found for x, or if it is unable
-     to label x at all */
-  return(0);
+     to label x at all */  
+	if ( y._isEmpty == 1 ) // 1 is true
+		return 1;
+	else 
+		return 0;
 }
 
 SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
@@ -242,6 +246,14 @@ double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm)
      y==ybar has to be zero. sparm->loss_function is set with the -l option. */
   if(sparm->loss_function == 0) { /* type 0 loss: 0/1 loss */
                                   /* return 0, if y==ybar. return 1 else */
+      assert(y._size == ybar._size);
+	  int i = 0;
+	  for (i = 0; i < y._size; i++){
+	      if (y._label[i] != ybar._label[i]){
+		      return 1;
+		  }
+	  }
+	  return 0; // all match
   }
   else {
     /* Put your code for different loss functions here. But then
@@ -311,6 +323,7 @@ void        write_label(FILE *fp, LABEL y)
 
 void        free_pattern(PATTERN x) {
   /* Frees the memory of x. */
+	
 }
 
 void        free_label(LABEL y) {
