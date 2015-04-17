@@ -2,7 +2,7 @@
 
 #Use the following to compile under unix or cygwin
 CC = gcc
-LD = gcc
+LD = g++
 
 #Call 'make' using the following line to make CYGWIN produce stand-alone Windows executables
 #		make 'SFLAGS=-mno-cygwin'
@@ -32,7 +32,7 @@ svm_struct_learn.o: svm_struct_learn.c ../svm_light/svm_learn.h svm_struct_commo
 	$(CC) -c $(CFLAGS) svm_struct_learn.c -o svm_struct_learn.o
 
 svm_struct_main.o: svm_struct_main.c ../svm_light/svm_common.h ../svm_light/svm_learn.h svm_struct_learn.h svm_struct_common.h ../svm_struct_api.h ../svm_struct_api_types.h
-	$(CC) -c $(CFLAGS) svm_struct_main.c -o svm_struct_main.o
+	$(LD) -c $(CFLAGS) svm_struct_main.c -o svm_struct_main.o
 
 svm_struct_classify.o: svm_struct_classify.c svm_struct_common.h ../svm_struct_api_types.h ../svm_struct_api.h ../svm_light/svm_common.h 
-	$(CC) -c $(CFLAGS) svm_struct_classify.c -o svm_struct_classify.o
+	$(LD) -c $(CFLAGS) svm_struct_classify.c -o svm_struct_classify.o
