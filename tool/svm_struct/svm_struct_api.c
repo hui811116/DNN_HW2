@@ -74,8 +74,7 @@ void        init_struct_model(SAMPLE sample, STRUCTMODEL *sm,
      weights that can be learned. Later, the weight vector w will
      contain the learned weights for the model. */
 
-  sm->sizePsi=5616; // 69*48 + 48*48
-
+  sm->sizePsi=100; /* replace by appropriate number of features */
 }
 
 CONSTSET    init_struct_constraints(SAMPLE sample, STRUCTMODEL *sm, 
@@ -102,8 +101,8 @@ CONSTSET    init_struct_constraints(SAMPLE sample, STRUCTMODEL *sm,
   else { /* add constraints so that all learned weights are
             positive. WARNING: Currently, they are positive only up to
             precision epsilon set by -e. */
-    c.lhs=(DOC**)my_malloc(sizeof(DOC *)*sizePsi);
-    c.rhs=(double*)my_malloc(sizeof(double)*sizePsi);
+    c.lhs=my_malloc(sizeof(DOC *)*sizePsi);
+    c.rhs=my_malloc(sizeof(double)*sizePsi);
     for(i=0; i<sizePsi; i++) {
       words[0].wnum=i+1;
       words[0].weight=1.0;
@@ -120,7 +119,7 @@ CONSTSET    init_struct_constraints(SAMPLE sample, STRUCTMODEL *sm,
 LABEL       classify_struct_example(PATTERN x, STRUCTMODEL *sm, 
 				    STRUCT_LEARN_PARM *sparm)
 {
-  /* Finds the label that for pattern x that scores the highest
+  /* Finds the label yhat for pattern x that scores the highest
      according to the linear evaluation function in sm, especially the
      weights sm.w. The returned label is taken as the prediction of sm
      for the pattern x. The weights correspond to the features defined

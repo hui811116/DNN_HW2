@@ -93,10 +93,10 @@ svm_learn.o: svm_learn.c svm_common.h
 	$(CC) -c $(CFLAGS) svm_learn.c -o svm_learn.o 
 
 svm_learn_main.o: svm_learn_main.c svm_learn.h svm_common.h
-	$(LD) -c $(CFLAGS) svm_learn_main.c -o svm_learn_main.o 
+	$(CC) -c $(CFLAGS) svm_learn_main.c -o svm_learn_main.o 
 
 svm_classify.o: svm_classify.c svm_common.h kernel.h
-	$(LD) -c $(CFLAGS) svm_classify.c -o svm_classify.o
+	$(CC) -c $(CFLAGS) svm_classify.c -o svm_classify.o
 
 #loqo: pr_loqo/pr_loqo.o
 
