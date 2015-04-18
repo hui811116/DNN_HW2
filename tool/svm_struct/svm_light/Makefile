@@ -56,13 +56,13 @@ info:
 # Create executables svm_learn and svm_classify
 
 svm_learn_hideo: svm_learn_main.o svm_learn.o svm_common.o svm_hideo.o 
-	$(LD) $(LFLAGS) svm_learn_main.o svm_learn.o svm_common.o svm_hideo.o -o svm_learn $(LIBS)
+	$(LD) $(LFLAGS) svm_learn_main.o svm_learn.o svm_common.o svm_hideo.o -o svm_learn.app $(LIBS)
 
 #svm_learn_loqo: svm_learn_main.o svm_learn.o svm_common.o svm_loqo.o loqo
 #	$(LD) $(LFLAGS) svm_learn_main.o svm_learn.o svm_common.o svm_loqo.o pr_loqo/pr_loqo.o -o svm_learn $(LIBS)
 
 svm_classify: svm_classify.o svm_common.o 
-	$(LD) $(LFLAGS) svm_classify.o svm_common.o -o svm_classify $(LIBS)
+	$(LD) $(LFLAGS) svm_classify.o svm_common.o -o svm_classify.app $(LIBS)
 
 
 # Create library libsvmlight.so, so that external code can get access to the

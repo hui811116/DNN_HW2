@@ -24,6 +24,7 @@ extern "C" {
 #endif
 #include "../svm_light/svm_common.h"
 #include "../svm_light/svm_learn.h"
+//#include "../../../include/myAlgorithm.h"
 #ifdef __cplusplus
 }
 #endif
