@@ -53,13 +53,41 @@ SAMPLE      read_struct_examples(char *file, STRUCT_LEARN_PARM *sparm)
      examples must be written into sample.n */
   SAMPLE   sample;  /* sample */
   EXAMPLE  *examples;
-  long     n;       /* number of examples */
-
-  n=100; /* replace by appropriate number of examples */
+  long     n=3696;       /* number of examples */
   examples=(EXAMPLE *)my_malloc(sizeof(EXAMPLE)*n);
-
+	FILE* fid;
+	char name[80];
+	int fnum=0;
+	int unum=0;
+	int i,j;
+	int lab;
+	float storeFeature[1024*69];
+	int storeLabel[1024];
+	fid=fopen(file,"r");
+	while(fscanf(fid,"%s",name)!=EOF){
+		fscanf(fid,"%d \n [",&fnum);
+		for(i=0;i<fnum;++i){
+			fscanf(fid,"%d",&lab);
+				storeLabel[i]=lab;
+			for(j=0;j<68;++j)
+					fscanf(fid," %f",&(storeFeature[i*69+j]));
+				fscanf(fid," %f]\n[",&(storeFeature[i*69+68]));
+		}
+		examples[unum].x._pattern=(float *)malloc(69*fnum*sizeof(float));
+		examples[unum].y._label=(int *)malloc(fnum*sizeof(int));
+		examples[unum].x._fnum=fnum;
+		examples[unum].x._dim=69;
+		examples[unum].y._isEmpty=0;
+		examples[unum].y._size=fnum;
+		for(i=0;i<fnum;++i){
+				examples[unum].y._label[i]=storeLabel[i];
+			for(j=0;j<69;++j)
+					examples[unum].x._pattern[i*69+j]=storeFeature[i*69+j];
+		}
+		unum++;
+	}
+//  n=100; /* replace by appropriate number of examples */
   /* fill in your code here */
-
   sample.n=n;
   sample.examples=examples;
   return(sample);
@@ -373,11 +401,12 @@ void        write_label(FILE *fp, LABEL y)
 
 void        free_pattern(PATTERN x) {
   /* Frees the memory of x. */
-	
+	free(x._pattern);
 }
 
 void        free_label(LABEL y) {
   /* Frees the memory of y. */
+  free(y._label);
 }
 
 void        free_struct_model(STRUCTMODEL sm) 
