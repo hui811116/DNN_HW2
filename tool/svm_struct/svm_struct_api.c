@@ -54,10 +54,18 @@ SAMPLE      read_struct_examples(char *file, STRUCT_LEARN_PARM *sparm)
   EXAMPLE  *examples;
   long     n;       /* number of examples */
 
-  n=100; /* replace by appropriate number of examples */
+  FILE* fid;
+  char buffer[300];
+  fid=fopen(file,"r");
+  while(fscanf(fid,"%s",buffer)!=EOF){
+    n++;
+  }
+  fclose(fid);
+   /* replace by appropriate number of examples */
   examples=(EXAMPLE *)my_malloc(sizeof(EXAMPLE)*n);
 
   /* fill in your code here */
+  fid=fopen(file,"r");
 
   sample.n=n;
   sample.examples=examples;

@@ -50,14 +50,14 @@ input.close();
 cout<<"done!"<<endl;
 
 cout<<"parsing complete!"<<endl;
-/*
-cout<<"begin to write file...";
+
+cout<<"begin to write file..."<<endl;
 ofstream out(argv[4]);
 if(!out){cerr<<" ERROR: unable to write file: [ "<<argv[4]<<" ]\n ";}
 write(out,f_ptr,l_ptr);
 out.close();
 cout<<"done!"<<endl;
-*/
+/*
 cout<<"allocating memeory...";
 double** observation=new double*[lmap.size()];
 int** state=new int*[lmap.size()];
@@ -76,14 +76,16 @@ svmFeature(svm,f_ptr,l_ptr,observation,state,lmap.size());
 svm.close();
 cout<<"done!"<<endl;
 
-delete f_ptr;
-delete l_ptr;
 for(size_t t=0;t<lmap.size();++t){
 	delete [] observation[t];
 	delete [] state[t];
 }
 delete [] observation;
 delete [] state;
+*/
+delete f_ptr;
+delete l_ptr;
+
 return 0;
 }
 
