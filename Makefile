@@ -57,9 +57,11 @@ svm_empty_classify:
 	@cd tool/svm_struct; make svm_empty_classify; cd ../..
 #===========UTIL==========
 dir:
+	@cd svm_struct; make dir; cd ..
 	@mkdir -p obj; mkdir -p bin
 
 ctags:
+	@cd svm_struct; make ctags; cd ..
 	@rm -f src/tags tags
 	@echo "Tagging src directory"
 	@cd src; ctags -a *.cpp ../include/*.h; ctags -a *.cu ../include/*.h; cd ..
@@ -69,7 +71,7 @@ ctags:
 clean:
 	@echo "All objects and executables removed"
 	@rm -f $(EXECUTABLES) obj/* bin/*
-	@cd tool/svm_struct; make clean; cd ..
+	@cd svm_struct; make clean; cd ..
 
 # +==============================+
 # +===== Other Phony Target =====+
