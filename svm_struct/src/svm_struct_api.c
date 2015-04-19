@@ -266,7 +266,35 @@ SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
 
   /* insert code for computing the feature vector for x and y here */
 
-  return(fvec);
+
+
+      assert(x._fnum==y._size);
+      int labelSize = 48;
+      size_t feature_vector_size = x._dim*labelSize+labelSize*labelSize;
+      fvec->words = (WORD*)calloc(feature_vector_size+1,sizeof(WORD));
+      int prevLabel = labelSize;
+      size_t i,j;
+      for( i=0;i<x._fnum;i++){
+
+              for(j=0;j<x._dim;j++){
+                      fvec->words[x._dim*y._label[i]+j].weight += x._pattern[i*x._dim+j];  
+
+              }
+
+              if(i>0) fvec->words[x._dim*labelSize+prevLabel*labelSize+y._label[i]].weight+=1
+
+
+      }
+
+      for( i=0;i<feature_vector_size;i++){
+              fvec->words[i].wnum = i+1;
+      }
+
+
+		return(fvec);
+  
+  
+
 }
 
 double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm)
