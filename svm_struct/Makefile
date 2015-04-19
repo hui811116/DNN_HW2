@@ -54,7 +54,7 @@ svm_struct_clean:
 #----  SVM empty API  ----#
 #-------------------------#
 
-svm_empty_classify: svm_light_hideo_noexe svm_struct_noexe $(OBJ) svm_struct/svm_struct_classify.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o $(OBJDIR)myAlgorithm.o
+svm_empty_classify: svm_light_hideo_noexe svm_struct_noexe $(OBJ) svm_struct/svm_struct_classify.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o $(OUTOBJDIR)myAlgorithm.o
 	$(LD) $(LDFLAGS) $(OBJ) svm_struct/svm_struct_classify.o svm_light/svm_common.o svm_struct/svm_struct_common.o -o svm_empty_classify.app $(INCLUDE) $(LIBS)
 
 svm_empty_learn: svm_light_hideo_noexe svm_struct_noexe $(OBJ) svm_struct/svm_struct_learn.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o $(OUTOBJDIR)myAlgorithm.o
@@ -72,9 +72,9 @@ obj/svm_struct_learn_custom.o: src/svm_struct_learn_custom.c include/svm_struct_
 $(OUTOBJDIR)myAlgorithm.o:
 	@cd .. ; make obj/myAlgorithm.o; cd svm_struct
 
-#obj/%.o: src/%.c include/%.h
-#	@echo "compiling $@ "
-#	@$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDE)
+obj/%.o: src/%.c include/%.h
+	@echo "compiling $@ "
+	@$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDE)
 
 #=================
 #======UTIL=======

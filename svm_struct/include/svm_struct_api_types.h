@@ -51,6 +51,7 @@
      10E-10 if COMPACT_CACHED_VECTORS is 2 or 3 
 */
 # define COMPACT_ROUNDING_THRESH 10E-15
+# define LABEL_MAX 48
 
 // these are for a single utterance
 typedef struct pattern {
