@@ -24,13 +24,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "../svm_light/svm_common.h"
-#include "../svm_light/svm_learn.h"
+#include "svm_common.h"
+#include "svm_learn.h"
 #ifdef __cplusplus
 }
 #endif
 #include "svm_struct_common.h" 
-#include "../svm_struct_api_types.h" 
+#include "svm_struct_api_types.h" 
 
 #define  SLACK_RESCALING    1
 #define  MARGIN_RESCALING   2

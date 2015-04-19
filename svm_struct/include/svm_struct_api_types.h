@@ -20,8 +20,8 @@
 #ifndef svm_struct_api_types
 #define svm_struct_api_types
 
-# include "svm_light/svm_common.h"
-# include "svm_light/svm_learn.h"
+# include "svm_common.h"
+# include "svm_learn.h"
 
 # define INST_NAME          "Generic and empty API"
 # define INST_VERSION       "V0.00"

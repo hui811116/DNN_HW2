@@ -20,7 +20,7 @@
 
 #include "svm_struct_learn.h"
 #include "svm_struct_common.h"
-#include "../svm_struct_api.h"
+#include "svm_struct_api.h"
 #include <assert.h>
 
 #define MAX(x,y)      ((x) < (y) ? (y) : (x))

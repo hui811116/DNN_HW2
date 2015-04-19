@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include "svm_struct/svm_struct_common.h"
+#include "svm_struct_common.h"
 #include "svm_struct_api.h"
 
 void        svm_struct_learn_api_init(int argc, char* argv[])

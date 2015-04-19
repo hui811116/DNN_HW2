@@ -52,11 +52,7 @@ cout<<"done!"<<endl;
 
 cout<<"parsing complete!"<<endl;
 
-<<<<<<< HEAD
-cout<<"begin to write file..."<<endl;
-=======
 cout<<"begin to write file...";
->>>>>>> FETCH_HEAD
 ofstream out(argv[4]);
 if(!out){cerr<<" ERROR: unable to write file: [ "<<argv[4]<<" ]\n ";}
 write(out,f_ptr,l_ptr,l_frame);

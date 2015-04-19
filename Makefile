@@ -18,6 +18,7 @@ EXECUTABLES=svmGen
 
 .PHONY: debug all clean 
 all:$(EXECUTABLES)
+	cd svm_struct; make
 
 LIBS=$(LIBCUMATDIR)lib/libcumatrix.a
 

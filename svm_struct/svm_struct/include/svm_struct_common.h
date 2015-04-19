@@ -25,11 +25,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "../svm_light/svm_common.h"
+#include "svm_common.h"
 #ifdef __cplusplus
 }
 #endif
-#include "../svm_struct_api_types.h"
+#include "svm_struct_api_types.h"
 
 typedef struct example {  /* an example is a pair of pattern and label */
   PATTERN x;

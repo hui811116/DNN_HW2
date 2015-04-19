@@ -22,15 +22,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "../svm_light/svm_common.h"
-#include "../svm_light/svm_learn.h"
+#include "svm_common.h"
+#include "svm_learn.h"
 //#include "../../../include/myAlgorithm.h"
 #ifdef __cplusplus
 }
 #endif
 # include "svm_struct_learn.h"
 # include "svm_struct_common.h"
-# include "../svm_struct_api.h"
+# include "svm_struct_api.h"
 
 #include <stdio.h>
 #include <string.h>
