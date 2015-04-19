@@ -281,7 +281,7 @@ SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
 
               }
 
-              if(i>0) fvec->words[x._dim*labelSize+prevLabel*labelSize+y._label[i]].weight+=1
+              if(i>0) fvec->words[x._dim*labelSize+prevLabel*labelSize+y._label[i]].weight+=1;
 
 
       }
