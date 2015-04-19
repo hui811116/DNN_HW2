@@ -61,3 +61,15 @@ svm_struct_learn_custom.o: svm_struct_learn_custom.c svm_struct_api.h svm_light/
 #=================
 $(OBJDIR)myAlgorithm.o:
 	@cd ../..; make obj/myAlgorithm.o; cd tool/svm_struct
+
+
+#=================
+#======UTIL=======
+#=================
+ctags:
+	@rm -f tags svm_struct/tags svm_light/tags
+	@echo "Tagging svm_struct"
+	@cd svm_struct; ctags -a *.c *.h; cd ..
+	@echo "Tagging svm_light"
+	@cd svm_light; ctags -a *.c *.h; cd ..
+	@ctags -a *.c svm_struct/* svm_light/* 
