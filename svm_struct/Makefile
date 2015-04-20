@@ -82,10 +82,10 @@ obj/%.o: src/%.c include/%.h
 ctags:
 	@rm -f tags svm_struct/tags svm_light/tags
 	@echo "Tagging svm_struct"
-	@cd svm_struct; ctags -a *.c *.h; cd ..
+	@cd svm_struct; ctags -a *.c include/*.h; cd ..
 	@echo "Tagging svm_light"
 	@cd svm_light; ctags -a *.c *.h; cd ..
-	@ctags -a *.c src/* svm_struct/* svm_light/* 
+	@ctags -a src/* include/* svm_struct/* svm_light/* 
 dir:
 	@mkdir -p obj
 	@mkdir -p include

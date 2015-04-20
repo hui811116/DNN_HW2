@@ -313,6 +313,7 @@ double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm)
     /* Put your code for different loss functions here. But then
        find_most_violated_constraint_???(x, y, sm) has to return the
        highest scoring label with the largest loss. */
+		return 1; //TODO  return true loss instead of 1
   }
 }
 
@@ -402,22 +403,23 @@ STRUCTMODEL read_struct_model(char *file, STRUCT_LEARN_PARM *sparm)
 	FILE* fp;
 	
 	fp = fopen(file, "r");
-	fscanf(fp, "size of w: %ld\n", mdl.sizePsi);
-	fscanf(fp, "walpha: %f\n", mdl.walpha);
+	fscanf(fp, "size of w: %ld\n", &mdl.sizePsi);
+	fscanf(fp, "walpha: %lf\n", &mdl.walpha);
 	// structure model unknown
 	// write struct_model_parameter
-	fscanf(fp, "epsilon: %f\n", sparm->epsilon);	
-	fscanf(fp, "newconstretrain: %f\n", sparm->newconstretrain);
-	fscanf(fp, "ccache_size: %d\n", sparm->ccache_size);
-	fscanf(fp, "batch_size: %f\n", sparm->batch_size);
-	fscanf(fp, "C: %f\n", sparm->C);
-	fscanf(fp, "slack_norm: %d\n", sparm->slack_norm);
-	fscanf(fp, "loss_type: %d\n", sparm->loss_type);
-	fscanf(fp, "loss_function: %d\n", sparm->loss_function);
+	fscanf(fp, "epsilon: %lf\n", &(sparm->epsilon));	
+	fscanf(fp, "newconstretrain: %lf\n", &(sparm->newconstretrain));
+	fscanf(fp, "ccache_size: %d\n", &(sparm->ccache_size));
+	fscanf(fp, "batch_size: %lf\n", &(sparm->batch_size));
+	fscanf(fp, "C: %lf\n", &(sparm->C));
+	fscanf(fp, "slack_norm: %d\n", &(sparm->slack_norm));
+	fscanf(fp, "loss_type: %d\n", &(sparm->loss_type));
+	fscanf(fp, "loss_function: %d\n", &(sparm->loss_function));
 	// write custom arguments
 	
-	fscanf(fp, "custom_argc: %d\n", sparm->custom_argc);
+	fscanf(fp, "custom_argc: %d\n", &(sparm->custom_argc));
 	fclose(fp);
+	return mdl;
 }
 
 void        write_label(FILE *fp, LABEL y)

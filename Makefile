@@ -66,7 +66,7 @@ ctags:
 	@echo "Tagging src directory"
 	@cd src; ctags -a *.cpp ../include/*.h; ctags -a *.cu ../include/*.h; cd ..
 	@echo "Tagging main directory"
-	@ctags -a *.cpp src/* ; ctags -a *.cu src/*
+	@ctags -a src/* ; ctags -a svm_struct/*
 
 clean:
 	@echo "All objects and executables removed"
