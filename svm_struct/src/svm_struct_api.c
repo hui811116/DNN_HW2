@@ -262,39 +262,36 @@ SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
      that ybar!=y that maximizes psi(x,ybar,sm)*sm.w (where * is the
      inner vector product) and the appropriate function of the
      loss + margin/slack rescaling method. See that paper for details. */
-  SVECTOR *fvec=NULL;
-
+    // SVECTOR *fvec=NULL;
+	
   /* insert code for computing the feature vector for x and y here */
-
-
-
       assert(x._fnum==y._size);
-      int labelSize = 48;
-      size_t feature_vector_size = x._dim*labelSize+labelSize*labelSize;
+    //  SVECTOR *fvec = (SVECTOR*)calloc(1, sizeof(SVECTOR));      
+	SVECTOR *fvec = (SVECTOR*)malloc(sizeof(SVECTOR));
+     // int labelSize = LABEL_MAX;
+      size_t feature_vector_size = x._dim*LABEL_MAX+LABEL_MAX*LABEL_MAX;
+      
       fvec->words = (WORD*)calloc(feature_vector_size+1,sizeof(WORD));
-      int prevLabel = labelSize;
+      int prevLabel = LABEL_MAX;
       size_t i,j;
       for( i=0;i<x._fnum;i++){
-
               for(j=0;j<x._dim;j++){
                       fvec->words[x._dim*y._label[i]+j].weight += x._pattern[i*x._dim+j];  
 
               }
 
-              if(i>0) fvec->words[x._dim*labelSize+prevLabel*labelSize+y._label[i]].weight+=1;
+              if(i>0) fvec->words[x._dim*LABEL_MAX+prevLabel*LABEL_MAX+y._label[i]].weight+=1;
 
-
+      		prevLabel = y._label[i];
       }
 
       for( i=0;i<feature_vector_size;i++){
               fvec->words[i].wnum = i+1;
       }
 
-
+	//for test
+	//write_psi("TEST.txt",fvec);
 		return(fvec);
-  
-  
-
 }
 
 double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm)
@@ -389,10 +386,10 @@ void        write_struct_model(char *file, STRUCTMODEL *sm,
 	fprintf(fp, "loss_type: %d\n", sparm->loss_type);
 	fprintf(fp, "loss_function: %d\n", sparm->loss_function);
 	// write custom arguments
-	
+
 	fprintf(fp, "custom_argc: %d\n", sparm->custom_argc);
-	
-	
+
+
 	fclose(fp);
 }
 
@@ -515,3 +512,17 @@ void         parse_struct_parameters_classify(STRUCT_LEARN_PARM *sparm)
   }
 }
 
+//For Test
+void		write_psi(char* file,SVECTOR *psi)
+{
+	FILE* fp;
+	fp  = fopen(file,"w");
+	int i;
+	for(i=0;i<5616;i++){
+
+		fprintf(fp,"  %d  %f\n",psi->words[i].wnum ,psi->words[i].weight);
+
+	}
+	fclose(fp);
+		
+}

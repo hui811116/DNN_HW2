@@ -75,4 +75,7 @@ void        svm_learn_struct_joint_custom(SAMPLE sample,
 				   LEARN_PARM *lparm, KERNEL_PARM *kparm, 
 				   STRUCTMODEL *sm);
 
+//For Test
+void	   write_psi(char* file, SVECTOR *psi);
+
 #endif

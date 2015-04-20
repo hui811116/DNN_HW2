@@ -70,7 +70,8 @@ int main (int argc, char* argv[])
   if(struct_verbosity>=1) {
     printf("done\n"); fflush(stdout);
   }
-  
+   
+   
   /* Do the learning and return structmodel. */
   if(alg_type == 0)
     svm_learn_struct(sample,&struct_parm,&learn_parm,&kernel_parm,&structmodel,NSLACK_ALG);
