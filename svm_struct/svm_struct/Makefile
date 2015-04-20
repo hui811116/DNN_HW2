@@ -29,13 +29,13 @@ INCLUDE= -I include/\
 #----------------------#
 
 svm_struct_common.o: svm_struct_common.c include/svm_struct_common.h
-	$(CC) -c $(CFLAGS) svm_struct_common.c $(INCLUDE) -o svm_struct_common.o
+	@$(CC) -c $(CFLAGS) svm_struct_common.c $(INCLUDE) -o svm_struct_common.o
 
 svm_struct_learn.o: svm_struct_learn.c include/svm_struct_common.h
-	$(CC) -c $(CFLAGS) svm_struct_learn.c $(INCLUDE) -o svm_struct_learn.o
+	@$(CC) -c $(CFLAGS) svm_struct_learn.c $(INCLUDE) -o svm_struct_learn.o
 
 svm_struct_main.o: svm_struct_main.c include/svm_struct_learn.h include/svm_struct_common.h
-	$(LD) -c $(CFLAGS) svm_struct_main.c $(INCLUDE) -o svm_struct_main.o
+	@$(LD) -c $(CFLAGS) svm_struct_main.c $(INCLUDE) -o svm_struct_main.o
 
 svm_struct_classify.o: svm_struct_classify.c include/svm_struct_common.h 
-	$(LD) -c $(CFLAGS) svm_struct_classify.c $(INCLUDE) -o svm_struct_classify.o
+	@$(LD) -c $(CFLAGS) svm_struct_classify.c $(INCLUDE) -o svm_struct_classify.o

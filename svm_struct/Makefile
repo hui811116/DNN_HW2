@@ -17,7 +17,7 @@ OBJ=obj/svm_struct_api.o obj/svm_struct_learn_custom.o
 
 .PHONY: all clean 
 
-all: svm_empty_learn svm_empty_classify dir
+all:dir svm_empty_learn svm_empty_classify
 
 clean: svm_light_clean svm_struct_clean
 	@echo "removing obj files and dump files..."
@@ -34,20 +34,24 @@ INCLUDE= -I include/\
 #----   SVM-light   ----#
 #-----------------------#
 svm_light_hideo_noexe: 
-	cd svm_light; make svm_learn_hideo_noexe
+	@echo "Building svm_light"
+	@cd svm_light; make svm_learn_hideo_noexe
 
 svm_light_clean: 
-	cd svm_light; make clean
+	@echo "Cleaning svm_light"
+	@cd svm_light; make clean
 
 #----------------------#
 #----  STRUCT SVM  ----#
 #----------------------#
 
-svm_struct_noexe: 
-	cd svm_struct; make svm_struct_noexe
+svm_struct_noexe:
+	@echo "Building svm_struct" 
+	@cd svm_struct; make svm_struct_noexe
 
 svm_struct_clean: 
-	cd svm_struct; make clean
+	@echo "Cleaning svm_struct"
+	@cd svm_struct; make clean
 
 
 #-------------------------#
@@ -55,21 +59,26 @@ svm_struct_clean:
 #-------------------------#
 
 svm_empty_classify: svm_light_hideo_noexe svm_struct_noexe $(OBJ) svm_struct/svm_struct_classify.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o $(OUTOBJDIR)myAlgorithm.o
-	$(LD) $(LDFLAGS) $(OBJ) svm_struct/svm_struct_classify.o svm_light/svm_common.o svm_struct/svm_struct_common.o -o svm_empty_classify.app $(INCLUDE) $(LIBS)
+	@echo "Compiling: $@"
+	@$(LD) $(LDFLAGS) $(OBJ) svm_struct/svm_struct_classify.o svm_light/svm_common.o svm_struct/svm_struct_common.o -o svm_empty_classify.app $(INCLUDE) $(LIBS)
 
 svm_empty_learn: svm_light_hideo_noexe svm_struct_noexe $(OBJ) svm_struct/svm_struct_learn.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o $(OUTOBJDIR)myAlgorithm.o
-	$(LD) $(LDFLAGS) svm_struct/svm_struct_learn.o $(OBJ) svm_light/svm_hideo.o svm_light/svm_learn.o svm_light/svm_common.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o -o svm_empty_learn.app $(INCLUDE) $(LIBS)
+	@echo "Compiling: $@"
+	@$(LD) $(LDFLAGS) svm_struct/svm_struct_learn.o $(OBJ) svm_light/svm_hideo.o svm_light/svm_learn.o svm_light/svm_common.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o -o svm_empty_learn.app $(INCLUDE) $(LIBS)
 
 obj/svm_struct_api.o: src/svm_struct_api.c include/svm_struct_api.h
-	$(CC) -c $(CFLAGS) src/svm_struct_api.c $(INCLUDE) -o $@
+	@echo "Compiling object: $@"
+	@$(CC) -c $(CFLAGS) src/svm_struct_api.c $(INCLUDE) -o $@
 
 obj/svm_struct_learn_custom.o: src/svm_struct_learn_custom.c
-	$(CC) -c $(CFLAGS) src/svm_struct_learn_custom.c $(INCLUDE) -o $@
+	@echo "Compiling object: $@"
+	@$(CC) -c $(CFLAGS) src/svm_struct_learn_custom.c $(INCLUDE) -o $@
 
 #=================
 #==OTHER TARGETS==
 #=================
 $(OUTOBJDIR)myAlgorithm.o:
+	@echo "Compiling object: $@"
 	@cd .. ; make obj/myAlgorithm.o; cd svm_struct
 
 obj/%.o: src/%.c include/%.h
@@ -87,6 +96,7 @@ ctags:
 	@cd svm_light; ctags -a *.c *.h; cd ..
 	@ctags -a src/* include/* svm_struct/* svm_light/* 
 dir:
+	@echo "creating object folder: obj/"
 	@mkdir -p obj
 	@mkdir -p include
 	@mkdir -p src

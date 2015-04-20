@@ -1303,6 +1303,7 @@ MODEL *read_model(char *modelfile)
   WORD *words;
   char version_buffer[100];
   MODEL *model;
+  int status=0;
 
   if(verbosity>=1) {
     printf("Reading model..."); fflush(stdout);
@@ -1319,22 +1320,22 @@ MODEL *read_model(char *modelfile)
   if ((modelfl = fopen (modelfile, "r")) == NULL)
   { perror (modelfile); exit (1); }
 
-  fscanf(modelfl,"SVM-light Version %s\n",version_buffer);
+  status=fscanf(modelfl,"SVM-light Version %s\n",version_buffer);
   if(strcmp(version_buffer,VERSION)) {
     perror ("Version of model-file does not match version of svm_classify!"); 
     exit (1); 
   }
-  fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.kernel_type);  
-  fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.poly_degree);
-  fscanf(modelfl,"%lf%*[^\n]\n", &model->kernel_parm.rbf_gamma);
-  fscanf(modelfl,"%lf%*[^\n]\n", &model->kernel_parm.coef_lin);
-  fscanf(modelfl,"%lf%*[^\n]\n", &model->kernel_parm.coef_const);
-  fscanf(modelfl,"%[^#]%*[^\n]\n", model->kernel_parm.custom);
+  status=fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.kernel_type);  
+  status=fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.poly_degree);
+  status=fscanf(modelfl,"%lf%*[^\n]\n", &model->kernel_parm.rbf_gamma);
+  status=fscanf(modelfl,"%lf%*[^\n]\n", &model->kernel_parm.coef_lin);
+  status=fscanf(modelfl,"%lf%*[^\n]\n", &model->kernel_parm.coef_const);
+  status=fscanf(modelfl,"%[^#]%*[^\n]\n", model->kernel_parm.custom);
 
-  fscanf(modelfl,"%ld%*[^\n]\n", &model->totwords);
-  fscanf(modelfl,"%ld%*[^\n]\n", &model->totdoc);
-  fscanf(modelfl,"%ld%*[^\n]\n", &model->sv_num);
-  fscanf(modelfl,"%lf%*[^\n]\n", &model->b);
+  status=fscanf(modelfl,"%ld%*[^\n]\n", &model->totwords);
+  status=fscanf(modelfl,"%ld%*[^\n]\n", &model->totdoc);
+  status=fscanf(modelfl,"%ld%*[^\n]\n", &model->sv_num);
+  status=fscanf(modelfl,"%lf%*[^\n]\n", &model->b);
 
   model->supvec = (DOC **)my_malloc(sizeof(DOC *)*model->sv_num);
   model->alpha = (double *)my_malloc(sizeof(double)*model->sv_num);
@@ -1360,6 +1361,7 @@ MODEL *read_model(char *modelfile)
   if(verbosity>=1) {
     fprintf(stdout, "OK. (%d support vectors read)\n",(int)(model->sv_num-1));
   }
+  if(status) {}
   return(model);
 }
 
