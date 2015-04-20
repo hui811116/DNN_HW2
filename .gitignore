@@ -36,4 +36,4 @@ bin/*
 
 # Tags
 tags
-src/tags
+*/tags
