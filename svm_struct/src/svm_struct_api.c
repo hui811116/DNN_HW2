@@ -17,9 +17,10 @@
 /*                                                                     */
 /***********************************************************************/
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include "svm_struct/svm_struct_common.h"
+#include "svm_struct_common.h"
 #include "svm_struct_api.h"
 
 void        svm_struct_learn_api_init(int argc, char* argv[])
@@ -52,13 +53,42 @@ SAMPLE      read_struct_examples(char *file, STRUCT_LEARN_PARM *sparm)
      examples must be written into sample.n */
   SAMPLE   sample;  /* sample */
   EXAMPLE  *examples;
-  long     n;       /* number of examples */
-
-  n=100; /* replace by appropriate number of examples */
+   /* replace by appropriate number of examples */
+  long     n=3696;       /* number of examples */
   examples=(EXAMPLE *)my_malloc(sizeof(EXAMPLE)*n);
-
+	FILE* fid;
+	char name[80];
+	int fnum=0;
+	int unum=0;
+	int i,j;
+	int lab;
+	float storeFeature[1024*69];
+	int storeLabel[1024];
+	fid=fopen(file,"r");
+	while(fscanf(fid,"%s",name)!=EOF){
+		fscanf(fid,"%d \n [",&fnum);
+		for(i=0;i<fnum;++i){
+			fscanf(fid,"%d",&lab);
+				storeLabel[i]=lab;
+			for(j=0;j<68;++j)
+					fscanf(fid," %f",&(storeFeature[i*69+j]));
+				fscanf(fid," %f]\n[",&(storeFeature[i*69+68]));
+		}
+		examples[unum].x._pattern=(float *)malloc(69*fnum*sizeof(float));
+		examples[unum].y._label=(int *)malloc(fnum*sizeof(int));
+		examples[unum].x._fnum=fnum;
+		examples[unum].x._dim=69;
+		examples[unum].y._isEmpty=0;
+		examples[unum].y._size=fnum;
+		for(i=0;i<fnum;++i){
+				examples[unum].y._label[i]=storeLabel[i];
+			for(j=0;j<69;++j)
+					examples[unum].x._pattern[i*69+j]=storeFeature[i*69+j];
+		}
+		unum++;
+	}
+//  n=100; /* replace by appropriate number of examples */
   /* fill in your code here */
-
   sample.n=n;
   sample.examples=examples;
   return(sample);
@@ -202,8 +232,11 @@ int         empty_label(LABEL y)
   /* Returns true, if y is an empty label. An empty label might be
      returned by find_most_violated_constraint_???(x, y, sm) if there
      is no incorrect label that can be found for x, or if it is unable
-     to label x at all */
-  return(0);
+     to label x at all */  
+	if ( y._isEmpty == 1 ) // 1 is true
+		return 1;
+	else 
+		return 0;
 }
 
 SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
@@ -229,11 +262,36 @@ SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
      that ybar!=y that maximizes psi(x,ybar,sm)*sm.w (where * is the
      inner vector product) and the appropriate function of the
      loss + margin/slack rescaling method. See that paper for details. */
-  SVECTOR *fvec=NULL;
-
+    // SVECTOR *fvec=NULL;
+	
   /* insert code for computing the feature vector for x and y here */
+      assert(x._fnum==y._size);
+    //  SVECTOR *fvec = (SVECTOR*)calloc(1, sizeof(SVECTOR));      
+	SVECTOR *fvec = (SVECTOR*)malloc(sizeof(SVECTOR));
+     // int labelSize = LABEL_MAX;
+      size_t feature_vector_size = x._dim*LABEL_MAX+LABEL_MAX*LABEL_MAX;
+      
+      fvec->words = (WORD*)calloc(feature_vector_size+1,sizeof(WORD));
+      int prevLabel = LABEL_MAX;
+      size_t i,j;
+      for( i=0;i<x._fnum;i++){
+              for(j=0;j<x._dim;j++){
+                      fvec->words[x._dim*y._label[i]+j].weight += x._pattern[i*x._dim+j];  
 
-  return(fvec);
+              }
+
+              if(i>0) fvec->words[x._dim*LABEL_MAX+prevLabel*LABEL_MAX+y._label[i]].weight+=1;
+
+      		prevLabel = y._label[i];
+      }
+
+      for( i=0;i<feature_vector_size;i++){
+              fvec->words[i].wnum = i+1;
+      }
+
+	//for test
+	//write_psi("TEST.txt",fvec);
+		return(fvec);
 }
 
 double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm)
@@ -242,11 +300,20 @@ double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm)
      y==ybar has to be zero. sparm->loss_function is set with the -l option. */
   if(sparm->loss_function == 0) { /* type 0 loss: 0/1 loss */
                                   /* return 0, if y==ybar. return 1 else */
+      assert(y._size == ybar._size);
+	  int i = 0;
+	  for (i = 0; i < y._size; i++){
+	      if (y._label[i] != ybar._label[i]){
+		      return 1;
+		  }
+	  }
+	  return 0; // all match
   }
   else {
     /* Put your code for different loss functions here. But then
        find_most_violated_constraint_???(x, y, sm) has to return the
        highest scoring label with the largest loss. */
+		return 1; //TODO  return true loss instead of 1
   }
 }
 
@@ -296,25 +363,85 @@ void        write_struct_model(char *file, STRUCTMODEL *sm,
 			       STRUCT_LEARN_PARM *sparm)
 {
   /* Writes structural model sm to file file. */
+	FILE* fp;
+	fp = fopen(file, "w");
+	// write struct_model
+	int i = 0;
+	fprintf(fp, "w: ");
+	for (i = 0; i < sm->sizePsi; i++){
+		fprintf(fp, "%f ", sm->w[i]);
+	}
+	fprintf(fp, "\n");
+
+	fprintf(fp, "size of w: %ld\n", sm->sizePsi);
+
+	fprintf(fp, "walpha: %f\n", sm->walpha);
+	// structure model unknown
+	// write struct_model_parameter
+	fprintf(fp, "epsilon: %f\n", sparm->epsilon);	
+	fprintf(fp, "newconstretrain: %f\n", sparm->newconstretrain);
+	fprintf(fp, "ccache_size: %d\n", sparm->ccache_size);
+	fprintf(fp, "batch_size: %f\n", sparm->batch_size);
+	fprintf(fp, "C: %f\n", sparm->C);
+	fprintf(fp, "slack_norm: %d\n", sparm->slack_norm);
+	fprintf(fp, "loss_type: %d\n", sparm->loss_type);
+	fprintf(fp, "loss_function: %d\n", sparm->loss_function);
+	// write custom arguments
+
+	fprintf(fp, "custom_argc: %d\n", sparm->custom_argc);
+
+
+	fclose(fp);
 }
+
 
 STRUCTMODEL read_struct_model(char *file, STRUCT_LEARN_PARM *sparm)
 {
   /* Reads structural model sm from file file. This function is used
      only in the prediction module, not in the learning module. */
+	STRUCTMODEL mdl;
+	FILE* fp;
+	
+	fp = fopen(file, "r");
+	fscanf(fp, "size of w: %ld\n", &mdl.sizePsi);
+	fscanf(fp, "walpha: %lf\n", &mdl.walpha);
+	// structure model unknown
+	// write struct_model_parameter
+	fscanf(fp, "epsilon: %lf\n", &(sparm->epsilon));	
+	fscanf(fp, "newconstretrain: %lf\n", &(sparm->newconstretrain));
+	fscanf(fp, "ccache_size: %d\n", &(sparm->ccache_size));
+	fscanf(fp, "batch_size: %lf\n", &(sparm->batch_size));
+	fscanf(fp, "C: %lf\n", &(sparm->C));
+	fscanf(fp, "slack_norm: %d\n", &(sparm->slack_norm));
+	fscanf(fp, "loss_type: %d\n", &(sparm->loss_type));
+	fscanf(fp, "loss_function: %d\n", &(sparm->loss_function));
+	// write custom arguments
+	
+	fscanf(fp, "custom_argc: %d\n", &(sparm->custom_argc));
+	fclose(fp);
+	return mdl;
 }
 
 void        write_label(FILE *fp, LABEL y)
 {
+	int i;
+	if(fp==NULL)perror("ERROR: write_label failed!(error opening file!)\n");
+	fprintf(fp,"<label> %d\n",y._size);
+	for(i=0;i<y._size;++i){
+		fprintf(fp," %d",y._label[i]);
+	}
+	fprintf(fp,"\n");
   /* Writes label y to file handle fp. */
 } 
 
 void        free_pattern(PATTERN x) {
   /* Frees the memory of x. */
+	free(x._pattern);
 }
 
 void        free_label(LABEL y) {
   /* Frees the memory of y. */
+  free(y._label);
 }
 
 void        free_struct_model(STRUCTMODEL sm) 
@@ -387,3 +514,17 @@ void         parse_struct_parameters_classify(STRUCT_LEARN_PARM *sparm)
   }
 }
 
+//For Test
+void		write_psi(char* file,SVECTOR *psi)
+{
+	FILE* fp;
+	fp  = fopen(file,"w");
+	int i;
+	for(i=0;i<5616;i++){
+
+		fprintf(fp,"  %d  %f\n",psi->words[i].wnum ,psi->words[i].weight);
+
+	}
+	fclose(fp);
+		
+}

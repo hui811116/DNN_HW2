@@ -22,14 +22,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "../svm_light/svm_common.h"
-#include "../svm_light/svm_learn.h"
+#include "svm_common.h"
+#include "svm_learn.h"
+//#include "../../../include/myAlgorithm.h"
 #ifdef __cplusplus
 }
 #endif
 # include "svm_struct_learn.h"
 # include "svm_struct_common.h"
-# include "../svm_struct_api.h"
+# include "svm_struct_api.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -69,7 +70,8 @@ int main (int argc, char* argv[])
   if(struct_verbosity>=1) {
     printf("done\n"); fflush(stdout);
   }
-  
+   
+   
   /* Do the learning and return structmodel. */
   if(alg_type == 0)
     svm_learn_struct(sample,&struct_parm,&learn_parm,&kernel_parm,&structmodel,NSLACK_ALG);

@@ -20,11 +20,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "../svm_light/svm_common.h"
+#include "svm_common.h"
 #ifdef __cplusplus
 }
 #endif
-#include "../svm_struct_api.h"
+#include "svm_struct_api.h"
 #include "svm_struct_common.h"
 
 char testfile[200];

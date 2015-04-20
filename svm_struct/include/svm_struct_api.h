@@ -18,7 +18,7 @@
 /***********************************************************************/
 
 #include "svm_struct_api_types.h"
-#include "svm_struct/svm_struct_common.h"
+#include "svm_struct_common.h"
 
 #ifndef svm_struct_api
 #define svm_struct_api
@@ -74,5 +74,8 @@ void        svm_learn_struct_joint_custom(SAMPLE sample,
 				   STRUCT_LEARN_PARM *sparm,
 				   LEARN_PARM *lparm, KERNEL_PARM *kparm, 
 				   STRUCTMODEL *sm);
+
+//For Test
+void	   write_psi(char* file, SVECTOR *psi);
 
 #endif

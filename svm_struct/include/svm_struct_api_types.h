@@ -20,8 +20,8 @@
 #ifndef svm_struct_api_types
 #define svm_struct_api_types
 
-# include "svm_light/svm_common.h"
-# include "svm_light/svm_learn.h"
+# include "svm_common.h"
+# include "svm_learn.h"
 
 # define INST_NAME          "Generic and empty API"
 # define INST_VERSION       "V0.00"
@@ -51,18 +51,23 @@
      10E-10 if COMPACT_CACHED_VECTORS is 2 or 3 
 */
 # define COMPACT_ROUNDING_THRESH 10E-15
+# define LABEL_MAX 48
 
-
+// these are for a single utterance
 typedef struct pattern {
   /* this defines the x-part of a training example, e.g. the structure
      for storing a natural language sentence in NLP parsing */
-  int add_your_variables_here;
+	size_t _fnum;
+	size_t _dim;
+	float* _pattern; 
 } PATTERN;
 
 typedef struct label {
   /* this defines the y-part (the label) of a training example,
      e.g. the parse tree of the corresponding sentence. */
-  int add_your_variables_here;
+	int* _label;
+	int  _isEmpty;
+	int  _size; // the number of frames in this utterance
 } LABEL;
 
 typedef struct structmodel {

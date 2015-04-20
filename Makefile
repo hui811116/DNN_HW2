@@ -5,6 +5,7 @@ CPPFLAGS=-std=c++11 -O2
 NVCFLAGS=-Xcompiler -fPIC -std=c++11
 CUDADIR=/usr/local/cuda/
 LIBCUMATDIR=tool/libcumatrix/
+SVMDIR=tool/svm_struct/
 OBJ=obj/svmset.o obj/myAlgorithm.o 
 # ================================
 # = 		ADD EXE HERE         =
@@ -17,6 +18,7 @@ EXECUTABLES=svmGen
 
 .PHONY: debug all clean 
 all:$(EXECUTABLES)
+	cd svm_struct; make
 
 LIBS=$(LIBCUMATDIR)lib/libcumatrix.a
 
@@ -33,8 +35,8 @@ vpath %.cu src/
 INCLUDE= -I include/\
 	 -I $(LIBCUMATDIR)include/\
 	 -I $(CUDADIR)include/\
-	 -I $(CUDADIR)samples/common/inc/
-
+	 -I $(CUDADIR)samples/common/inc/\
+	 
 LD_LIBRARY=-L$(CUDADIR)lib64 -L$(LIBCUMATDIR)lib
 LIBRARY=-lcuda -lcublas -lcudart
 
@@ -47,23 +49,28 @@ larry: example/larryTest.cpp $(OBJ) $(LIBS)
 #	$(CXX) $(CPPFLAGS) -o bin/hui.app $^ -I include/
 svmGen: example/svmFeatureGen.cpp
 	$(CXX) $(CPPFLAGS) -o bin/svmFeatureGen.app $^
-
-
+structSvm: svm_empty_learn svm_empty_classify
+svm_empty_learn: 
+	@cd tool/svm_struct; make svm_empty_learn; cd ../..
+svm_empty_classify:
+	@cd tool/svm_struct; make svm_empty_classify; cd ../..
 #===========UTIL==========
 dir:
+	@cd svm_struct; make dir; cd ..
 	@mkdir -p obj; mkdir -p bin
 
 ctags:
+	@cd svm_struct; make ctags; cd ..
 	@rm -f src/tags tags
 	@echo "Tagging src directory"
 	@cd src; ctags -a *.cpp ../include/*.h; ctags -a *.cu ../include/*.h; cd ..
 	@echo "Tagging main directory"
-	@ctags -a *.cpp src/* ; ctags -a *.cu src/*
+	@ctags -a src/* ; ctags -a svm_struct/*
 
 clean:
 	@echo "All objects and executables removed"
 	@rm -f $(EXECUTABLES) obj/* bin/*
-
+	@cd svm_struct; make clean; cd ..
 
 # +==============================+
 # +===== Other Phony Target =====+

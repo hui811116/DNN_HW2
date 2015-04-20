@@ -4,6 +4,7 @@
 *.o
 *.obj
 obj/*
+./**/*.o
 
 # Precompiled Headers
 *.gch
@@ -27,11 +28,12 @@ obj/*
 *.exe
 *.out
 *.app
+./**/*.app
+bin/*
 
 # Log file
 *.log
 
 # Tags
 tags
-src/tags
-bin/*
+*/tags
