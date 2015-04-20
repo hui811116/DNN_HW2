@@ -60,10 +60,10 @@ svm_empty_classify: svm_light_hideo_noexe svm_struct_noexe $(OBJ) svm_struct/svm
 svm_empty_learn: svm_light_hideo_noexe svm_struct_noexe $(OBJ) svm_struct/svm_struct_learn.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o $(OUTOBJDIR)myAlgorithm.o
 	$(LD) $(LDFLAGS) svm_struct/svm_struct_learn.o $(OBJ) svm_light/svm_hideo.o svm_light/svm_learn.o svm_light/svm_common.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o -o svm_empty_learn.app $(INCLUDE) $(LIBS)
 
-obj/svm_struct_api.o: src/svm_struct_api.c include/svm_struct_api.h include/svm_struct_api_types.h
+obj/svm_struct_api.o: src/svm_struct_api.c include/svm_struct_api.h
 	$(CC) -c $(CFLAGS) src/svm_struct_api.c $(INCLUDE) -o $@
 
-obj/svm_struct_learn_custom.o: src/svm_struct_learn_custom.c include/svm_struct_api.h
+obj/svm_struct_learn_custom.o: src/svm_struct_learn_custom.c
 	$(CC) -c $(CFLAGS) src/svm_struct_learn_custom.c $(INCLUDE) -o $@
 
 #=================

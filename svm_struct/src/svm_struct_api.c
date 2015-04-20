@@ -60,19 +60,19 @@ SAMPLE      read_struct_examples(char *file, STRUCT_LEARN_PARM *sparm)
 	char name[80];
 	int fnum=0;
 	int unum=0;
-	int i,j;
+	int i,j,boo=0;
 	int lab;
 	float storeFeature[1024*69];
 	int storeLabel[1024];
 	fid=fopen(file,"r");
 	while(fscanf(fid,"%s",name)!=EOF){
-		fscanf(fid,"%d \n [",&fnum);
+		boo=fscanf(fid,"%d \n [",&fnum);
 		for(i=0;i<fnum;++i){
-			fscanf(fid,"%d",&lab);
+			boo=fscanf(fid,"%d",&lab);
 				storeLabel[i]=lab;
 			for(j=0;j<68;++j)
-					fscanf(fid," %f",&(storeFeature[i*69+j]));
-				fscanf(fid," %f]\n[",&(storeFeature[i*69+68]));
+					boo=fscanf(fid," %f",&(storeFeature[i*69+j]));
+				boo=fscanf(fid," %f]\n[",&(storeFeature[i*69+68]));
 		}
 		examples[unum].x._pattern=(float *)malloc(69*fnum*sizeof(float));
 		examples[unum].y._label=(int *)malloc(fnum*sizeof(int));
@@ -87,6 +87,7 @@ SAMPLE      read_struct_examples(char *file, STRUCT_LEARN_PARM *sparm)
 		}
 		unum++;
 	}
+	if(boo){printf("read_struct_examples done!\n");}
 //  n=100; /* replace by appropriate number of examples */
   /* fill in your code here */
   sample.n=n;
@@ -401,24 +402,25 @@ STRUCTMODEL read_struct_model(char *file, STRUCT_LEARN_PARM *sparm)
      only in the prediction module, not in the learning module. */
 	STRUCTMODEL mdl;
 	FILE* fp;
-	
+	int i;	
 	fp = fopen(file, "r");
-	fscanf(fp, "size of w: %ld\n", &mdl.sizePsi);
-	fscanf(fp, "walpha: %lf\n", &mdl.walpha);
+	i=fscanf(fp, "size of w: %ld\n", &mdl.sizePsi);
+	i=fscanf(fp, "walpha: %lf\n", &mdl.walpha);
 	// structure model unknown
 	// write struct_model_parameter
-	fscanf(fp, "epsilon: %lf\n", &(sparm->epsilon));	
-	fscanf(fp, "newconstretrain: %lf\n", &(sparm->newconstretrain));
-	fscanf(fp, "ccache_size: %d\n", &(sparm->ccache_size));
-	fscanf(fp, "batch_size: %lf\n", &(sparm->batch_size));
-	fscanf(fp, "C: %lf\n", &(sparm->C));
-	fscanf(fp, "slack_norm: %d\n", &(sparm->slack_norm));
-	fscanf(fp, "loss_type: %d\n", &(sparm->loss_type));
-	fscanf(fp, "loss_function: %d\n", &(sparm->loss_function));
+	i=fscanf(fp, "epsilon: %lf\n", &(sparm->epsilon));	
+	i=fscanf(fp, "newconstretrain: %lf\n", &(sparm->newconstretrain));
+	i=fscanf(fp, "ccache_size: %d\n", &(sparm->ccache_size));
+	i=fscanf(fp, "batch_size: %lf\n", &(sparm->batch_size));
+	i=fscanf(fp, "C: %lf\n", &(sparm->C));
+	i=fscanf(fp, "slack_norm: %d\n", &(sparm->slack_norm));
+	i=fscanf(fp, "loss_type: %d\n", &(sparm->loss_type));
+	i=fscanf(fp, "loss_function: %d\n", &(sparm->loss_function));
 	// write custom arguments
-	
-	fscanf(fp, "custom_argc: %d\n", &(sparm->custom_argc));
+
+	i=fscanf(fp, "custom_argc: %d\n", &(sparm->custom_argc));
 	fclose(fp);
+	if(i){printf("read_struct_model done!\n");}
 	return mdl;
 }
 
