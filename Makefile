@@ -49,6 +49,8 @@ larry: example/larryTest.cpp $(OBJ) $(LIBS)
 #	$(CXX) $(CPPFLAGS) -o bin/hui.app $^ -I include/
 svmGen: example/svmFeatureGen.cpp
 	$(CXX) $(CPPFLAGS) -o bin/svmFeatureGen.app $^
+featNorm: example/featureNorm.cpp
+	$(CXX) $(CPPFLAGS) -o bin/featNorm.app $^
 structSvm: svm_empty_learn svm_empty_classify
 svm_empty_learn: 
 	@cd tool/svm_struct; make svm_empty_learn; cd ../..
