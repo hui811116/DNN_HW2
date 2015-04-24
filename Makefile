@@ -10,7 +10,7 @@ OBJ=obj/svmset.o obj/myAlgorithm.o
 # ================================
 # = 		ADD EXE HERE         =
 # ================================
-EXECUTABLES=svmGen
+EXECUTABLES=svmGen featNorm
 
 # +==============================+
 # +======== Phony Rules =========+
@@ -45,8 +45,6 @@ larry: example/larryTest.cpp $(OBJ) $(LIBS)
 	$(CXX) $(CPPFLAGS) -o bin/larry.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
 #ahpan: example/ahpanDatasetTest.cpp $(OBJ) $(LIBS)
 #	$(CXX) $(CPPFLAGS) -o bin/ahpanDatasetTest.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
-#hui: example/svmsetTest.cpp obj/svmset.o 
-#	$(CXX) $(CPPFLAGS) -o bin/hui.app $^ -I include/
 svmGen: example/svmFeatureGen.cpp
 	$(CXX) $(CPPFLAGS) -o bin/svmFeatureGen.app $^
 featNorm: example/featureNorm.cpp
