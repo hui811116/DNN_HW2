@@ -51,9 +51,9 @@ featNorm: example/featureNorm.cpp
 	$(CXX) $(CPPFLAGS) -o bin/featNorm.app $^
 structSvm: svm_empty_learn svm_empty_classify
 svm_empty_learn: 
-	@cd tool/svm_struct; make svm_empty_learn; cd ../..
+	@cd svm_struct; make svm_empty_learn; cd ..
 svm_empty_classify:
-	@cd tool/svm_struct; make svm_empty_classify; cd ../..
+	@cd svm_struct; make svm_empty_classify; cd ..
 #===========UTIL==========
 dir:
 	@cd svm_struct; make dir; cd ..
