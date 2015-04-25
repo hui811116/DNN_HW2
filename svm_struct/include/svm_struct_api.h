@@ -45,6 +45,7 @@ int         empty_label(LABEL y);
 SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm, 
 	        STRUCT_LEARN_PARM *sparm);
 double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm);
+double      loss_viterbi(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm, int compSize);
 int         finalize_iteration(double ceps, int cached_constraint,
 			       SAMPLE sample, STRUCTMODEL *sm,
 			       CONSTSET cset, double *alpha, 

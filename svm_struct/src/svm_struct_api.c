@@ -295,8 +295,7 @@ SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
 		return(fvec);
 }
 
-double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm)
-{
+double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm){
   /* loss for correct label y and predicted label ybar. The loss for
      y==ybar has to be zero. sparm->loss_function is set with the -l option. */
   if(sparm->loss_function == 0) { /* type 0 loss: 0/1 loss */
@@ -304,6 +303,28 @@ double      loss(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm)
       assert(y._size == ybar._size);
 	  int i = 0;
 	  for (i = 0; i < y._size; i++){
+	      if (y._label[i] != ybar._label[i]){
+		      return 1;
+		  }
+	  }
+	  return 0; // all match
+  }
+  else {
+    /* Put your code for different loss functions here. But then
+       find_most_violated_constraint_???(x, y, sm) has to return the
+       highest scoring label with the largest loss. */
+		return 1; //TODO  return true loss instead of 1
+  }
+}
+double      loss_viterbi(LABEL y, LABEL ybar, STRUCT_LEARN_PARM *sparm, int compSize){
+  /* loss for correct label y and predicted label ybar. The loss for
+     y==ybar has to be zero. sparm->loss_function is set with the -l option. */
+  if(sparm->loss_function == 0) { /* type 0 loss: 0/1 loss */
+                                  /* return 0, if y==ybar. return 1 else */
+      assert(y._size >= compSize);
+	  assert(ybar._size >= compSize);
+	  int i = 0;
+	  for (i = 0; i < compSize; i++){
 	      if (y._label[i] != ybar._label[i]){
 		      return 1;
 		  }
