@@ -20,8 +20,40 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
+#include <float.h>
 #include "svm_struct_common.h"
 #include "svm_struct_api.h"
+
+#define	MAX_FEATURE_SIZE	1000
+#define MAX_STATE_SIZE   	48
+#define FEATURE_DIMENSION	69
+
+// Helper function
+void print(const double* vec, size_t vecSize){
+  size_t i = 0;
+  for(; i < vecSize; i++){
+    printf("%f\n", vec[i]);
+  }
+}
+
+double sumOfVec(const double* vec, size_t vecSize){
+  double sum = 0.0;
+  size_t i = 0;
+  for(; i < vecSize; i++){
+    sum += vec[i];
+  }
+  return sum;
+}
+
+void dotProduct(double* temp, const double* vec1, const double* vec2, size_t idx1, size_t idx2, size_t dotRange){
+  size_t i = 0;
+  for(; i < dotRange; i++){
+    temp[i] = vec1[idx1+i] * vec2[idx2 + i];
+  }
+}
+
 
 void        svm_struct_learn_api_init(int argc, char* argv[])
 {
@@ -159,7 +191,108 @@ LABEL       classify_struct_example(PATTERN x, STRUCTMODEL *sm,
      recognized by the function empty_label(y). */
   LABEL y;
 
-  /* insert your code for computing the predicted label y here */
+/* insert your code for computing the predicted label y here */
+  y._label = (int*)malloc(sizeof(int)*x._fnum);
+  //y.isEmpty = 0;
+  y._size = x._fnum;
+
+  double* pattern = x._pattern;
+  size_t featureNum = x._fnum;
+  size_t inputDim = x._dim;
+  size_t stateNum = MAX_STATE_SIZE;
+
+  double* weight = sm->w;
+  size_t weightLength = sm->sizePsi;
+  size_t transIdx = inputDim * stateNum;
+  int* seq = y._label;
+
+  assert( weightLength == stateNum * stateNum + inputDim * stateNum + 1);
+
+  memset(seq, 0, featureNum*sizeof(int));
+  double viterbiTemp[MAX_STATE_SIZE][MAX_FEATURE_SIZE];
+  int viterbiTrack[MAX_STATE_SIZE][MAX_FEATURE_SIZE];
+
+  memset(viterbiTemp, -DBL_MAX, sizeof(viterbiTemp));
+  memset(viterbiTrack, -1, sizeof(viterbiTrack));
+
+  double* phi = (double*)malloc(sizeof(double)*weightLength);
+  double* temp = (double*)malloc(sizeof(double)*weightLength);
+  
+  size_t i = 0;
+  size_t j = 0;
+  size_t k = 0;
+  for(k = 0; k < stateNum; k++){
+	memset(phi, 0.0, weightLength*sizeof(double));
+	//thrust::fill(phi.begin(), phi.end(), 0);
+	memcpy(phi + k*inputDim, pattern, inputDim*sizeof(double));
+	//thrust::copy(ptrX, ptrX + inputDim, phi.begin() + k*inputDim);
+	phi[transIdx + k*stateNum + k] = 1;
+
+	// printf("\n");
+	// print(phi, weightLength);
+	// printf("\n");
+
+	dotProduct(temp, weight, phi, 0, 0, weightLength);
+	//thrust::transform(phi.begin(), phi.end(), ptrW, temp.begin(), thrust::multiplies<double>());
+	double sum = sumOfVec(temp, weightLength);
+	//double sum = thrust::reduce(temp.begin(), temp.end(), (double) 0, thrust::plus<double>());
+	viterbiTemp[k][0] = sum;
+  }
+
+  for(i = 1; i < featureNum-1; i++){
+    for(k = 0; k < stateNum; k++){
+	  for(j = 0; j < stateNum; j++){
+	    memset(phi, 0, weightLength*sizeof(double));
+		//thrust::fill(phi.begin(), phi.end(), 0);
+		memcpy(phi + k*inputDim, pattern + i*inputDim, inputDim*sizeof(double));
+		//thrust::copy(ptrX+i*inputDim, ptrX+(i+1)*inputDim, phi.begin() + k*inputDim);
+		phi[transIdx + j*stateNum + k] = 1;
+
+		dotProduct(temp, weight, phi, 0, 0, weightLength);
+		//thrust::transform(phi.begin(), phi.end(), ptrW, temp.begin(), thrust::multiplies<double>());
+		double sum = sumOfVec(temp, weightLength);
+		//double sum = thrust::reduce(temp.begin(), temp.end(), (double) 0, thrust::plus<double>());
+		if( viterbiTemp[k][i] < sum + viterbiTemp[j][i-1] ){
+		  viterbiTemp[k][i] = sum + viterbiTemp[j][i-1];
+		  viterbiTrack[k][i] = j;
+		}
+	  }
+	}
+  }
+
+  for(k = 0; k < stateNum; k++){
+    for(j = 0; j < stateNum; j++){
+	  memset(phi, 0, weightLength*sizeof(double));
+	  //thrust::fill(phi.begin(), phi.end(), 0);
+	  memcpy(phi + k*inputDim, pattern + (featureNum-1)*inputDim, inputDim*sizeof(double));
+	  //thrust::copy(ptrX + (featureNum-1)*inputDim, ptrX + featureNum*inputDim, phi.begin() + k*inputDim);
+      phi[transIdx + stateNum*stateNum] = 1;
+																				
+	  dotProduct(temp, weight, phi, 0, 0, weightLength);
+	  //thrust::transform(phi.begin(), phi.end(), ptrW, temp.begin(), thrust::multiplies<double>());
+	  double sum = sumOfVec(temp, weightLength);
+	  //double sum = thrust::reduce(temp.begin(), temp.end(), (double) 0, thrust::plus<double>());
+	  if( viterbiTemp[k][featureNum-1] < sum + viterbiTemp[j][featureNum-2] ){
+	    viterbiTemp[k][featureNum-1] = sum + viterbiTemp[j][featureNum-2];
+		viterbiTrack[k][featureNum-1] = j;
+	  }
+	}
+  }
+
+  // Back tracking
+  double maxValue = viterbiTemp[0][featureNum-1];
+  size_t idx = 0;
+  for(j = 0; j < stateNum; j++){
+    if(maxValue < viterbiTemp[j][featureNum-1]){
+	  maxValue = viterbiTemp[j][featureNum-1];
+	  idx = j;
+	}
+  }
+  seq[featureNum-1] = idx;
+  for(i = featureNum-1; i > 0; i--){
+    idx = viterbiTrack[idx][i];
+	seq[i-1] = idx;
+  }
 
   return(y);
 }
@@ -191,6 +324,7 @@ LABEL       find_most_violated_constraint_slackrescaling(PATTERN x, LABEL y,
      empty_label(y). */
   LABEL ybar;
 
+  
   /* insert your code for computing the label ybar here */
 
   return(ybar);
@@ -224,6 +358,108 @@ LABEL       find_most_violated_constraint_marginrescaling(PATTERN x, LABEL y,
   LABEL ybar;
 
   /* insert your code for computing the label ybar here */
+  ybar._label = (int*)malloc(sizeof(int)*x._fnum);
+  //ybar.isEmpty = 0;
+  ybar._size = x._fnum;
+  
+  double* pattern = x._pattern;
+  size_t featureNum = x._fnum;
+  size_t inputDim = x._dim;
+  size_t stateNum = MAX_STATE_SIZE;
+
+  double* weight = sm->w;
+  size_t weightLength = sm->sizePsi;
+  size_t transIdx = inputDim * stateNum;
+  int* seq = ybar._label;
+
+  assert( weightLength == stateNum * stateNum + inputDim * stateNum + 1);
+
+  memset(seq, 0, featureNum*sizeof(int));
+  double viterbiTemp[MAX_STATE_SIZE][MAX_FEATURE_SIZE];
+  int viterbiTrack[MAX_STATE_SIZE][MAX_FEATURE_SIZE];
+
+  memset(viterbiTemp, -DBL_MAX, sizeof(viterbiTemp));
+  memset(viterbiTrack, -1, sizeof(viterbiTrack));
+
+  double* phi = (double*)malloc(sizeof(double)*weightLength);
+  double* temp = (double*)malloc(sizeof(double)*weightLength);
+  
+  size_t i = 0;
+  size_t j = 0;
+  size_t k = 0;
+  for(k = 0; k < stateNum; k++){
+	memset(phi, 0.0, weightLength*sizeof(double));
+	//thrust::fill(phi.begin(), phi.end(), 0);
+	memcpy(phi + k*inputDim, pattern, inputDim*sizeof(double));
+	//thrust::copy(ptrX, ptrX + inputDim, phi.begin() + k*inputDim);
+	phi[transIdx + k*stateNum + k] = 1;
+
+	// printf("\n");
+	// print(phi, weightLength);
+	// printf("\n");
+
+	dotProduct(temp, weight, phi, 0, 0, weightLength);
+	//thrust::transform(phi.begin(), phi.end(), ptrW, temp.begin(), thrust::multiplies<double>());
+	double sum = sumOfVec(temp, weightLength) + loss_viterbi(y, k, sparm, 0);
+	//double sum = thrust::reduce(temp.begin(), temp.end(), (double) 0, thrust::plus<double>());
+	viterbiTemp[k][0] = sum;
+  }
+
+  for(i = 1; i < featureNum-1; i++){
+    for(k = 0; k < stateNum; k++){
+	  for(j = 0; j < stateNum; j++){
+	    memset(phi, 0, weightLength*sizeof(double));
+		//thrust::fill(phi.begin(), phi.end(), 0);
+		memcpy(phi + k*inputDim, pattern + i*inputDim, inputDim*sizeof(double));
+		//thrust::copy(ptrX+i*inputDim, ptrX+(i+1)*inputDim, phi.begin() + k*inputDim);
+		phi[transIdx + j*stateNum + k] = 1;
+
+		dotProduct(temp, weight, phi, 0, 0, weightLength);
+		//thrust::transform(phi.begin(), phi.end(), ptrW, temp.begin(), thrust::multiplies<double>());
+		double sum = sumOfVec(temp, weightLength) + loss_viterbi(y, k, sparm, i);
+		//double sum = thrust::reduce(temp.begin(), temp.end(), (double) 0, thrust::plus<double>());
+		if( viterbiTemp[k][i] < sum + viterbiTemp[j][i-1] ){
+		  viterbiTemp[k][i] = sum + viterbiTemp[j][i-1];
+		  viterbiTrack[k][i] = j;
+		}
+	  }
+	}
+  }
+
+  for(k = 0; k < stateNum; k++){
+    for(j = 0; j < stateNum; j++){
+	  memset(phi, 0, weightLength*sizeof(double));
+	  //thrust::fill(phi.begin(), phi.end(), 0);
+	  memcpy(phi + k*inputDim, pattern + (featureNum-1)*inputDim, inputDim*sizeof(double));
+	  //thrust::copy(ptrX + (featureNum-1)*inputDim, ptrX + featureNum*inputDim, phi.begin() + k*inputDim);
+      phi[transIdx + stateNum*stateNum] = 1;
+																				
+	  dotProduct(temp, weight, phi, 0, 0, weightLength);
+	  //thrust::transform(phi.begin(), phi.end(), ptrW, temp.begin(), thrust::multiplies<double>());
+	  double sum = sumOfVec(temp, weightLength) + loss_viterbi(y, k, sparm, featureNum-1);
+	  //double sum = thrust::reduce(temp.begin(), temp.end(), (double) 0, thrust::plus<double>());
+	  if( viterbiTemp[k][featureNum-1] < sum + viterbiTemp[j][featureNum-2] ){
+	    viterbiTemp[k][featureNum-1] = sum + viterbiTemp[j][featureNum-2];
+		viterbiTrack[k][featureNum-1] = j;
+	  }
+	}
+  }
+
+  // Back tracking
+  double maxValue = viterbiTemp[0][featureNum-1];
+  size_t idx = 0;
+  for(j = 0; j < stateNum; j++){
+    if(maxValue < viterbiTemp[j][featureNum-1]){
+	  maxValue = viterbiTemp[j][featureNum-1];
+	  idx = j;
+	}
+  }
+  seq[featureNum-1] = idx;
+  for(i = featureNum-1; i > 0; i--){
+    idx = viterbiTrack[idx][i];
+	seq[i-1] = idx;
+  }
+
 
   return(ybar);
 }

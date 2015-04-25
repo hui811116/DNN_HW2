@@ -59,7 +59,7 @@ typedef struct pattern {
      for storing a natural language sentence in NLP parsing */
 	size_t _fnum;
 	size_t _dim;
-	float* _pattern; 
+	double* _pattern; 
 } PATTERN;
 
 typedef struct label {
