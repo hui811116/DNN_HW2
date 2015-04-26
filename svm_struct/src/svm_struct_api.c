@@ -263,13 +263,36 @@ SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
      that ybar!=y that maximizes psi(x,ybar,sm)*sm.w (where * is the
      inner vector product) and the appropriate function of the
      loss + margin/slack rescaling method. See that paper for details. */
-    // SVECTOR *fvec=NULL;
+     SVECTOR *fvec=NULL;
 	
   /* insert code for computing the feature vector for x and y here */
-      assert(x._fnum==y._size);
-    //  SVECTOR *fvec = (SVECTOR*)calloc(1, sizeof(SVECTOR));      
+	WORD* words;
+	
+	double factor = 1;
+	size_t feature_vector_size = x._dim*LABEL_MAX+LABEL_MAX*LABEL_MAX;
+      
+      	words = (WORD*)calloc(feature_vector_size+1,sizeof(WORD));
+      	int prevLabel = LABEL_MAX;
+      	size_t i,j;
+      	for( i=0;i<x._fnum;i++){
+        	 for(j=0;j<x._dim;j++){
+                	      words[x._dim*y._label[i]+j].weight += x._pattern[i*x._dim+j];  
+
+              		}		
+
+             	 if(i>0) words[x._dim*LABEL_MAX+prevLabel*LABEL_MAX+y._label[i]].weight+=1;
+
+      		prevLabel = y._label[i];
+      }
+
+      for( i=0;i<feature_vector_size;i++){
+              words[i].wnum = i+1;
+      }
+	words[feature_vector_size].wnum=0;
+	create_svector(words,NULL,factor);    
+/*
+  assert(x._fnum==y._size);
 	SVECTOR *fvec = (SVECTOR*)malloc(sizeof(SVECTOR));
-     // int labelSize = LABEL_MAX;
       size_t feature_vector_size = x._dim*LABEL_MAX+LABEL_MAX*LABEL_MAX;
       
       fvec->words = (WORD*)calloc(feature_vector_size+1,sizeof(WORD));
@@ -289,7 +312,7 @@ SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
       for( i=0;i<feature_vector_size;i++){
               fvec->words[i].wnum = i+1;
       }
-
+*/
 	//for test
 	//write_psi("TEST.txt",fvec);
 		return(fvec);
