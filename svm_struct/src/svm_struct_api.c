@@ -106,7 +106,7 @@ SAMPLE      read_struct_examples(char *file, STRUCT_LEARN_PARM *sparm)
 					boo=fscanf(fid," %f",&(storeFeature[i*69+j]));
 				boo=fscanf(fid," %f]\n[",&(storeFeature[i*69+68]));
 		}
-		examples[unum].x._pattern=(float *)malloc(69*fnum*sizeof(float));
+		examples[unum].x._pattern=(float *)malloc(69*fnum*sizeof(double));
 		examples[unum].y._label=(int *)malloc(fnum*sizeof(int));
 		examples[unum].x._fnum=fnum;
 		examples[unum].x._dim=69;

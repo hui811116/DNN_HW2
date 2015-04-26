@@ -11,6 +11,6 @@ UNIRANGE="0.1 0.5 1 2";
 C=0.01
 TRAIN=/home/hui/model/svm_fbank.ark
 LABEL=/home/ahpan/DeepLearningHW2/DNN_HW2/Data/MLDS_HW1_RELEASE_v1/label/train.lab 
-gdb --args ./svm_struct/svm_empty_learn.app -c {C} {TRAIN} {LABEL} 
+gdb --args ./svm_struct/svm_empty_learn.app -c ${C} ${TRAIN} ${LABEL} 
 
 
