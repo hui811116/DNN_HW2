@@ -10,7 +10,7 @@ OBJ=obj/svmset.o obj/myAlgorithm.o
 # ================================
 # = 		ADD EXE HERE         =
 # ================================
-EXECUTABLES=svmGen
+EXECUTABLES=svmGen featNorm
 
 # +==============================+
 # +======== Phony Rules =========+
@@ -45,15 +45,15 @@ larry: example/larryTest.cpp $(OBJ) $(LIBS)
 	$(CXX) $(CPPFLAGS) -o bin/larry.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
 #ahpan: example/ahpanDatasetTest.cpp $(OBJ) $(LIBS)
 #	$(CXX) $(CPPFLAGS) -o bin/ahpanDatasetTest.app $^ $(INCLUDE) $(LIBRARY) $(LD_LIBRARY)
-#hui: example/svmsetTest.cpp obj/svmset.o 
-#	$(CXX) $(CPPFLAGS) -o bin/hui.app $^ -I include/
 svmGen: example/svmFeatureGen.cpp
 	$(CXX) $(CPPFLAGS) -o bin/svmFeatureGen.app $^
+featNorm: example/featureNorm.cpp
+	$(CXX) $(CPPFLAGS) -o bin/featNorm.app $^
 structSvm: svm_empty_learn svm_empty_classify
 svm_empty_learn: 
-	@cd tool/svm_struct; make svm_empty_learn; cd ../..
+	@cd svm_struct; make svm_empty_learn; cd ..
 svm_empty_classify:
-	@cd tool/svm_struct; make svm_empty_classify; cd ../..
+	@cd svm_struct; make svm_empty_classify; cd ..
 #===========UTIL==========
 dir:
 	@cd svm_struct; make dir; cd ..

@@ -7,8 +7,8 @@
 CC = gcc
 LD = gcc
 
-CFLAGS =   $(SFLAGS) -O3 -fomit-frame-pointer -ffast-math -Wall 
-LDFLAGS =  $(SFLAGS) -O3 -lm -Wall
+CFLAGS =   $(SFLAGS) -O2 -std=c99 -fomit-frame-pointer -ffast-math -Wall -g
+LDFLAGS =  $(SFLAGS) -O2 -Wall -g
 #CFLAGS =  $(SFLAGS) -pg -Wall
 #LDFLAGS = $(SFLAGS) -pg -lm -Wall 
 LIBS = -lm
@@ -23,12 +23,12 @@ clean: svm_light_clean svm_struct_clean
 	@echo "removing obj files and dump files..."
 	@rm -f obj/*.o *.tcov *.d core gmon.out *.stackdump 
 
-vpath %.h include/
-vpath %.c src/
+#vpath %.h include/
+#vpath %.c src/
 
 INCLUDE= -I include/\
-		 -I svm_struct/include/\
-		 -I svm_light/
+	 -I svm_struct/include/\
+	 -I svm_light/
 
 #-----------------------#
 #----   SVM-light   ----#
@@ -80,10 +80,6 @@ obj/svm_struct_learn_custom.o: src/svm_struct_learn_custom.c
 $(OUTOBJDIR)myAlgorithm.o:
 	@echo "Compiling object: $@"
 	@cd .. ; make obj/myAlgorithm.o; cd svm_struct
-
-obj/%.o: src/%.c include/%.h
-	@echo "compiling $@ "
-	@$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDE)
 
 #=================
 #======UTIL=======
