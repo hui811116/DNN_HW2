@@ -529,7 +529,7 @@ SVECTOR     *psi(PATTERN x, LABEL y, STRUCTMODEL *sm,
       }
 	words[feature_vector_size].wnum=0;
 	words[feature_vector_size].weight=0;
-	create_svector(words,NULL,factor);    
+	fvec = create_svector(words,NULL,factor);    
 /*
   assert(x._fnum==y._size);
 	SVECTOR *fvec = (SVECTOR*)malloc(sizeof(SVECTOR));
