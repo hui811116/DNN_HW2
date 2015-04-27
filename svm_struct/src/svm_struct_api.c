@@ -137,7 +137,7 @@ void        init_struct_model(SAMPLE sample, STRUCTMODEL *sm,
      weights that can be learned. Later, the weight vector w will
      contain the learned weights for the model. */
 
-  sm->sizePsi=5616; /* replace by appropriate number of features */
+  sm->sizePsi=5617; /* replace by appropriate number of features */
 }
 
 CONSTSET    init_struct_constraints(SAMPLE sample, STRUCTMODEL *sm, 
@@ -372,6 +372,7 @@ LABEL       find_most_violated_constraint_marginrescaling(PATTERN x, LABEL y,
   size_t transIdx = inputDim * stateNum;
   int* seq = ybar._label;
 
+  printf("WeightLength: %d, LatterPart: %d. \n", weightLength, stateNum * stateNum + inputDim * stateNum + 1);
   assert( weightLength == stateNum * stateNum + inputDim * stateNum + 1);
 
   memset(seq, 0, featureNum*sizeof(int));
