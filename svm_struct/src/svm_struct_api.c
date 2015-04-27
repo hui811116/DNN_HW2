@@ -374,7 +374,6 @@ LABEL       find_most_violated_constraint_marginrescaling(PATTERN x, LABEL y,
   size_t transIdx = inputDim * stateNum;
   int* seq = ybar._label;
 
-  printf("WeightLength: %d, LatterPart: %d. \n", weightLength, stateNum * stateNum + inputDim * stateNum + 1);
   assert( weightLength == stateNum * stateNum + inputDim * stateNum + 1);
 
   memset(seq, 0, featureNum*sizeof(int));
